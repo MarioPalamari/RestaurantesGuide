@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('email')->unique();
-            $table->string('contra');
+            $table->string('password');
             $table->foreignId('rol_id')->constrained('roles');
             $table->rememberToken();
             $table->timestamps();
@@ -36,7 +36,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('usuarios');
         Schema::dropIfExists('sessions');
     }
 };
