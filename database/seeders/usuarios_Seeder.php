@@ -14,31 +14,31 @@ class usuarios_Seeder extends Seeder
             [
                 'nombre' => 'Admin',
                 'email' => 'admin@example.com',
-                'contra' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol_id' => 1
             ],
             [
                 'nombre' => 'Usuario1',
                 'email' => 'usuario1@example.com',
-                'contra' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol_id' => 2
             ],
             [
                 'nombre' => 'Moderador1',
                 'email' => 'moderador1@example.com',
-                'contra' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol_id' => 3
             ],
             [
                 'nombre' => 'Invitado1',
                 'email' => 'invitado1@example.com',
-                'contra' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol_id' => 4
             ],
             [
                 'nombre' => 'Editor1',
                 'email' => 'editor1@example.com',
-                'contra' => Hash::make('qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol_id' => 5
             ]
         ];
