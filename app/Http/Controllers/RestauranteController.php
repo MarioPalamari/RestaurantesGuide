@@ -40,4 +40,24 @@ class RestauranteController extends Controller
         // return view('cursos.index', ['cursos' => $cursos]);
         return  view('restaurantes.ver', compact('restaurante'));
     }
+    public function restaurantesMejorValorados()
+    {
+        $restaurantesMejorValorados = Restaurante::select(
+            'restaurantes.id',
+            'restaurantes.nombre',
+            'restaurantes.descripcion',
+            'restaurantes.precio_medio',
+            'restaurantes.img',
+            DB::raw('COALESCE(ROUND(AVG(valoraciones.valoracion), 2), 0) AS media_valoracion')
+        )
+        ->leftJoin('valoraciones', 'restaurantes.id', '=', 'valoraciones.id_restaurante')
+        ->groupBy('restaurantes.id', 'restaurantes.nombre', 'restaurantes.descripcion', 'restaurantes.precio_medio', 'restaurantes.img')
+        ->orderByDesc('media_valoracion')
+        ->limit(3) 
+        ->get();
+    
+        return view('dashboard', compact('restaurantesMejorValorados'));
+    }
+    
+    
 }
