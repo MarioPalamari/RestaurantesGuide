@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title> {{ $restaurante->nombre }}</title>
+    {{-- <title> {{ $restaurante->nombre }}</title> --}}
     <link rel="stylesheet" href="{{ asset('css/restaurante.css') }}">
 </head>
 
@@ -13,15 +13,9 @@
     <div class="contenedor">
         <!-- Columna izquierda -->
         <div class="columna izquierda">
-            <p>Ofrece una experiencia centrada en la cocina tradicional española. Con un ambiente familiar y cercano,
-                se especializa en arroces y tapas, elaborados con ingredientes frescos que realzan los sabores locales.
-                Su entorno relajado y acogedor lo convierte en una opción ideal para quienes desean disfrutar de una
-                comida
-                tranquila en un espacio que refleja la esencia de la tradición gastronómica regional. La calidad en el
-                servicio
-                y la calidez en la atención hacen de este lugar una elección destacada para cualquier ocasión.</p>
-
-            <img src="{{ asset('img/' . $restaurante->img) }}" alt="Arroz y Cañas">
+            <h1>{{ $restaurante->nombre }}</h1>
+            <p>{{ $restaurante->descripcion }}</p>
+            <img src="{{ asset('img/' . $restaurante->img) }}" alt="{{ 'Foto de ' . $restaurante->nombre }}">
         </div>
 
         <!-- Columna derecha -->
@@ -44,16 +38,14 @@
             <p>🌐 <a href="#">latxitxarreria.com</a></p>
         </div>
     </div>
-    {{-- <h1>{{ $restaurante->nombre }}</h1>
-    <div>
-        <div>
-            <p>{{ $restaurante->descripcion }}</p>
-            <img src="{{ asset('img/' . $restaurante->img) }}" alt="">
+    {{ $valoreaciones }}
+    @foreach ($valoreaciones as $valoreacion)
+        <div style="background-color:grey">
+            {{-- <p>{{ $valoreacion->nombre }}</p> --}}
+            <p> {{ $valoreacion->comentario }}</p>
+            <p>{{ $valoreacion->valoracion }}</p>
         </div>
-        <div>
-            info
-        </div>
-    </div> --}}
+    @endforeach
 </body>
 
 </html>

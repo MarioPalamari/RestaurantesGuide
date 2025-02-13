@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Restaurantes</title>
+    <title>Saborea Madrid | restaurantes</title>
     <link rel="stylesheet" href="{{ asset('css/restaurante.css') }}">
 </head>
 
@@ -73,6 +73,7 @@
                                     {{ $restaurante->media_valoracion == 0 ? '-- ✰' : $restaurante->media_valoracion . '★' }}
                                 </p>
                                 <p>Precio medio: {{ $restaurante->precio_medio }}€</p>
+                                {{-- <p>{{$restaurante->etiquetas}}</p> --}}
                             </div>
                         </button>
                     </form>
@@ -81,9 +82,9 @@
         </div>
     </div>
     <!-- Mostrar el paginador -->
-    <div class="pagination">
+    {{-- <div class="pagination">
         {{ $restaurantes->links('vendor.pagination.default') }}
-    </div>
+    </div> --}}
 </body>
 
 </html>
