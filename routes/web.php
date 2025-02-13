@@ -3,17 +3,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+route::controller(RestauranteController::class)->group(function () {
+    route::get('/', 'restaurantes')->name('restaurantes.restaurantes');
+    route::post('/restaurantes/{nombre}', 'inforestaurante')->name('restaurante.ver');
 });
-
