@@ -13,7 +13,7 @@ use App\Http\Controllers\RestauranteController;
 Route::middleware(['auth'])->group(function () {    
     // Rutas de restaurantes, dentro del middleware de autenticación
     route::controller(RestauranteController::class)->group(function () {
-        route::get('/', 'restaurantes')->name('restaurantes.restaurantes');
+        route::get('/restaurantes', 'restaurantes')->name('restaurantes.restaurantes');
         route::post('/restaurantes/{nombre}', 'inforestaurante')->name('restaurante.ver');
     });
 });
