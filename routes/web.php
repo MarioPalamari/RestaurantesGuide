@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RestauranteController;
+use App\Http\Controllers\AdminController;
 
 // Route::get('/', function () {
 //     return view('restaurantes.restaurantes');
@@ -16,7 +17,14 @@ Route::middleware(['auth'])->group(function () {
         route::get('/restaurantes', 'restaurantes')->name('restaurantes.restaurantes');
         route::post('/restaurantes/{nombre}', 'inforestaurante')->name('restaurante.ver');
     });
+
+    Route::controller(AdminController::class)->group(function () {
+        Route::get('/admin', 'ShowAdminDashboard')->name('admin.admin');
+    });
 });
+
+
+
 Route::get('/', [RestauranteController::class, 'restaurantesMejorValorados'])->name('dashboard');
 
 // Rutas públicas
