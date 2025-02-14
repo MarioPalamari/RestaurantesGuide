@@ -8,9 +8,6 @@ use App\Http\Controllers\AdminController;
 // Route::get('/', function () {
 //     return view('restaurantes.restaurantes');
 // })->name('restaurantes');
-
-
-
 Route::middleware(['auth'])->group(function () {
     // Rutas de restaurantes, dentro del middleware de autenticación
     route::controller(RestauranteController::class)->group(function () {
@@ -18,7 +15,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/mostrarrestaurantes', 'mostrarrestaurantes')->name('mostrarrestaurantes');
         route::post('/restaurantes/{nombre}', 'inforestaurante')->name('restaurante.ver');
     });
-
+    Route::get('/admin-restaurantes', ['/admin', 'ShowAdminRestaurantes'])->name('RestaurantesAdmin');
     Route::controller(AdminController::class)->group(function () {
         Route::get('/admin', 'ShowAdminDashboard')->name('admin.admin');
     });
