@@ -11,10 +11,11 @@ use App\Http\Controllers\AdminController;
 
 
 
-Route::middleware(['auth'])->group(function () {    
+Route::middleware(['auth'])->group(function () {
     // Rutas de restaurantes, dentro del middleware de autenticación
     route::controller(RestauranteController::class)->group(function () {
-        route::get('/restaurantes', 'restaurantes')->name('restaurantes.restaurantes');
+        Route::get('/restaurantes', 'mostrarpagina')->name('restaurantes.restaurantes');
+        Route::post('/mostrarrestaurantes', 'mostrarrestaurantes')->name('mostrarrestaurantes');
         route::post('/restaurantes/{nombre}', 'inforestaurante')->name('restaurante.ver');
     });
 
