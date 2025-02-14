@@ -16,7 +16,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Gestión de Usuarios</h5>
                         <p class="card-text">Administra los usuarios del sistema.</p>
-                        <a href="#" class="btn btn-primary">Ir a Usuarios</a>
+                        <a href="{{ route('admin.users.index') }}" class="btn btn-primary">Ir a Usuarios</a>
                     </div>
                 </div>
             </div>
@@ -26,19 +26,10 @@
                     <div class="card-body">
                         <h5 class="card-title">Gestión de Restaurantes</h5>
                         <p class="card-text">Administra los restaurantes del sistema.</p>
-                        <a href="#" class="btn btn-primary">Ir a Restaurantes</a>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Reportes</h5>
-                        <p class="card-text">Visualiza reportes del sistema.</p>
-                        <a href="#" class="btn btn-primary">Ver Reportes</a>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
