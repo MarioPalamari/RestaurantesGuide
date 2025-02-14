@@ -9,6 +9,12 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
+    <!-- resources/views/partials/navbar.blade.php -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <a style="padding-left: 1%;">
+            <img src="{{ asset('img/logo2.png') }}" alt="Logo"  class="d-inline-block align-top">
+        </a>
+        </nav>
     <!-- Enlace que envuelve todo el contenido, sin estilos de enlace visibles -->
     <a href="#" class="text-decoration-none d-block text-dark" id="loginLink">
         <!-- Sección de Hero -->
