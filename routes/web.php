@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RestauranteController;
+use App\Http\Controllers\AdminController;
 
 // Ruta raíz para el Dashboard (solo accesible cuando el usuario esté autenticado)
 Route::middleware(['auth'])->group(function () {    
@@ -11,7 +12,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/restaurantes', 'restaurantes')->name('restaurantes.restaurantes');
         Route::post('/restaurantes/{nombre}', 'inforestaurante')->name('restaurante.ver');
     });
+
+    Route::controller(AdminController::class)->group(function () {
+        Route::get('/admin', 'ShowAdminDashboard')->name('admin.admin');
+    });
 });
+
+
+
 Route::get('/', [RestauranteController::class, 'restaurantesMejorValorados'])->name('dashboard');
 
 // Rutas públicas
