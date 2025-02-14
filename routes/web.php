@@ -5,14 +5,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RestauranteController;
 use App\Http\Controllers\AdminController;
 
-// Ruta raíz para el Dashboard (solo accesible cuando el usuario esté autenticado)
-Route::middleware(['auth'])->group(function () {    
+// Route::get('/', function () {
+//     return view('restaurantes.restaurantes');
+// })->name('restaurantes');
+Route::middleware(['auth'])->group(function () {
     // Rutas de restaurantes, dentro del middleware de autenticación
-    Route::controller(RestauranteController::class)->group(function () {
-        Route::get('/restaurantes', 'restaurantes')->name('restaurantes.restaurantes');
-        Route::post('/restaurantes/{nombre}', 'inforestaurante')->name('restaurante.ver');
+    route::controller(RestauranteController::class)->group(function () {
+        Route::get('/restaurantes', 'mostrarpagina')->name('restaurantes.restaurantes');
+        Route::post('/mostrarrestaurantes', 'mostrarrestaurantes')->name('mostrarrestaurantes');
+        route::post('/restaurantes/{nombre}', 'inforestaurante')->name('restaurante.ver');
     });
-
+    Route::get('/admin-restaurantes', ['/admin', 'ShowAdminRestaurantes'])->name('RestaurantesAdmin');
     Route::controller(AdminController::class)->group(function () {
         Route::get('/admin', 'ShowAdminDashboard')->name('admin.admin');
     });
