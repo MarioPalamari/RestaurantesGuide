@@ -25,7 +25,7 @@
             </tr>
         </thead>
         <tbody id="resultadousuarios">
-
+            <!-- Los usuarios se cargarán aquí dinámicamente -->
         </tbody>
     </table>
 </div>
@@ -55,8 +55,8 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Rol</label>
-                        <select name="rol_id" class="form-control" required>
-
+                        <select id="createRol" name="rol_id" class="form-control" required>
+                            <!-- Las opciones se cargarán dinámicamente -->
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Crear</button>
@@ -77,7 +77,6 @@
             <div class="modal-body">
                 <form id="editUserForm" method="POST">
                     @csrf
-                    @method('PUT')
                     <div class="mb-3">
                         <label class="form-label">Nombre</label>
                         <input type="text" id="editNombre" name="nombre" class="form-control" required>
@@ -93,7 +92,7 @@
                     <div class="mb-3">
                         <label class="form-label">Rol</label>
                         <select id="editRol" name="rol_id" class="form-control" required>
-
+                            <!-- Las opciones se cargarán dinámicamente -->
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Actualizar</button>

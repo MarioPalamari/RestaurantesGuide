@@ -13,6 +13,24 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("editEmail").value = email;
         document.getElementById("editRol").value = rol_id;
 
+        // Cargar los roles en el select
+        fetch("/datosusuarios")
+            .then(response => response.json())
+            .then(data => {
+                let select = document.getElementById("editRol");
+                select.innerHTML = ""; // Limpiar opciones anteriores
+                
+                data.roles.forEach(rol => {
+                    let option = document.createElement("option");
+                    option.value = rol.id;
+                    option.text = rol.nombre;
+                    if (rol.id == rol_id) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+
         let form = document.getElementById("editUserForm");
         form.setAttribute("data-id", userId);
     });
@@ -28,34 +46,30 @@ document.addEventListener("DOMContentLoaded", function() {
             method: "POST",
             body: formData,
             headers: {
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                "Accept": "application/json"
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(text);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
-                let row = document.querySelector(`button[data-id='${userId}']`).closest("tr");
-                row.innerHTML = `
-                    <td>${data.user.nombre}</td>
-                    <td>${data.user.email}</td>
-                    <td>${data.user.rol}</td>
-                    <td>
-                        <button class="btn btn-warning btn-edit" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#editUserModal" 
-                            data-id="${data.user.id}"
-                            data-nombre="${data.user.nombre}" 
-                            data-email="${data.user.email}"
-                            data-rol_id="${data.user.rol_id}">
-                            Editar
-                        </button>
-                        <button class="btn btn-danger btn-delete" data-id="${data.user.id}">Eliminar</button>
-                    </td>
-                `;
+                mostrarusers();
                 document.querySelector("#editUserModal .btn-close").click();
+            } else {
+                alert(data.message || "Hubo un error al actualizar el usuario");
             }
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Hubo un error en la solicitud. Ver la consola para más detalles.");
+        });
     });
 
     // **Crear Usuario con AJAX**
@@ -68,36 +82,31 @@ document.addEventListener("DOMContentLoaded", function() {
             method: "POST",
             body: formData,
             headers: {
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                "Accept": "application/json"
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(text);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
-                let newRow = document.createElement("tr");
-                newRow.innerHTML = `
-                    <td>${data.user.nombre}</td>
-                    <td>${data.user.email}</td>
-                    <td>${data.user.rol}</td>
-                    <td>
-                        <button class="btn btn-warning btn-edit" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#editUserModal" 
-                            data-id="${data.user.id}"
-                            data-nombre="${data.user.nombre}" 
-                            data-email="${data.user.email}"
-                            data-rol_id="${data.user.rol_id}">
-                            Editar
-                        </button>
-                        <button class="btn btn-danger btn-delete" data-id="${data.user.id}">Eliminar</button>
-                    </td>
-                `;
-                document.querySelector("tbody").appendChild(newRow);
+                mostrarusers();
                 document.querySelector("#createUserModal .btn-close").click();
-                document.querySelector("#createUserModal form").reset();
+                this.reset();
+            } else {
+                alert(data.message || "Hubo un error al crear el usuario");
             }
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Hubo un error en la solicitud. Ver la consola para más detalles.");
+        });
     });
 
     // **Eliminar Usuario con AJAX**
@@ -122,46 +131,62 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     });
-});
 
-mostrarusers();
+    mostrarusers();
+});
 
 function mostrarusers() {
     var resultado = document.getElementById("resultadousuarios");
-    var csrfToken = document.querySelector('meta[name="csrf_token"]').getAttribute('content');
-    // var form = document.getElementById("formnewuser");
-    var formData = new FormData(form);
-    // var formData = new FormData();
-
+    
     fetch("/datosusuarios", {
-        method: "POST",
-        body: formData
+        method: "GET",
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+        }
     })
-        .then(response => {
-            if (!response.ok) throw new Error("Error al cargar los datos");
-            return response.json();
-        })
-        .then(data => {
-            resultado.innerHTML = ""; // Limpiar contenido anterior
-            console.log(data);
-            data.restaurantes.data.forEach(usuario => {
-                let mostrarusuariosHTML = ""
-                mostrarusuariosHTML += '<tr>';
-                mostrarusuariosHTML += '<td>' + usuario.nombre + '</td>';
-                mostrarusuariosHTML += '<td>' + user.email + '</td>';
-                mostrarusuariosHTML += '<td>'+ $user.rol.nombre +'</td>';
-                mostrarusuariosHTML += '<td>';
-                mostrarusuariosHTML += '<button class="btn btn-warning btn-edit">Editar</button>';
-                mostrarusuariosHTML += '<form action="" method="POST" style="display:inline">';
-                mostrarusuariosHTML += '@csrf';
-                mostrarusuariosHTML += '@method("DELETE")';
-                mostrarusuariosHTML += '<button type="submit" class="btn btn-danger">Eliminar</button>';
-                mostrarusuariosHTML += '</form>';
-                mostrarusuariosHTML += '</td>';
-                mostrarusuariosHTML += '</tr>';
-
-                resultado.innerHTML += mostrarusuariosHTML;
-            });
-        })
-        .catch(error => console.error("Hubo un error:", error));
+    .then(response => {
+        if (!response.ok) throw new Error("Error al cargar los datos");
+        return response.json();
+    })
+    .then(data => {
+        resultado.innerHTML = ""; // Limpiar contenido anterior
+        data.usuarios.forEach(usuario => {
+            let mostrarusuariosHTML = `
+                <tr>
+                    <td>${usuario.nombre}</td>
+                    <td>${usuario.email}</td>
+                    <td>${usuario.rol.nombre}</td>
+                    <td>
+                        <button class="btn btn-warning btn-edit" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editUserModal" 
+                            data-id="${usuario.id}"
+                            data-nombre="${usuario.nombre}" 
+                            data-email="${usuario.email}"
+                            data-rol_id="${usuario.rol_id}">
+                            Editar
+                        </button>
+                        <button class="btn btn-danger btn-delete" data-id="${usuario.id}">Eliminar</button>
+                    </td>
+                </tr>`;
+            resultado.innerHTML += mostrarusuariosHTML;
+        });
+    })
+    .catch(error => console.error("Hubo un error:", error));
 }
+
+document.getElementById('createUserModal').addEventListener('show.bs.modal', function() {
+    fetch("/datosusuarios")
+        .then(response => response.json())
+        .then(data => {
+            let select = document.getElementById("createRol");
+            select.innerHTML = ""; // Limpiar opciones anteriores
+            
+            data.roles.forEach(rol => {
+                let option = document.createElement("option");
+                option.value = rol.id;
+                option.text = rol.nombre;
+                select.appendChild(option);
+            });
+        });
+});
