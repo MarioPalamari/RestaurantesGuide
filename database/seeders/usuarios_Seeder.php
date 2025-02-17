@@ -22,6 +22,7 @@ class usuarios_Seeder extends Seeder
                 'email' => 'usuario1@example.com',
                 'password' => Hash::make('qweQWE123'),
                 'rol_id' => 2
+
             ],
             [
                 'nombre' => 'Moderador1',
