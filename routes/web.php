@@ -21,11 +21,7 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(AdminController::class)->group(function () {
         Route::get('/admin', 'showAdminDashboard')->name('admin.admin');
         Route::get('/admin/users/index', 'mostrarpagina')->name('admin.users.index');
-<<<<<<< HEAD
         Route::get('/datosusuarios', 'index');
-=======
-        Route::get('/datosusuarios', 'index')->name('datosusuarios');
->>>>>>> origin/test
         Route::post('/admin/users/store', 'store')->name('users.store');
         Route::post('/admin/users/update/{user}', 'update')->name('users.update');
         Route::delete('/admin/users/destroy/{user}', 'destroy')->name('users.destroy');
@@ -50,7 +46,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 
-<<<<<<< HEAD
 Route::get('/', [RestauranteController::class, 'restaurantesMejorValorados'])->name('dashboard');
 
 // Rutas públicas
@@ -59,10 +54,5 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
-=======
-    Route::get('/datosusuarios', [AdminController::class, 'index']);
-    Route::post('/admin/users/store', [AdminController::class, 'store'])->name('users.store');
-    Route::post('/admin/users/update/{user}', [AdminController::class, 'update'])->name('users.update');
-    Route::delete('/admin/users/destroy/{user}', [AdminController::class, 'destroy']);
-    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
->>>>>>> origin/test
+
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
