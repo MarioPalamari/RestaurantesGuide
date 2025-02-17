@@ -28,12 +28,6 @@ class AdminController extends Controller
         ]);
     }
 
-    public function create()
-    {
-        $roles = Rol::all();
-        return view('admin.users.create', compact('roles'));
-    }
-
     public function store(Request $request)
     {
         try {
@@ -62,12 +56,6 @@ class AdminController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
-    }
-
-    public function edit(User $user)
-    {
-        $roles = Rol::all();
-        return view('admin.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)
