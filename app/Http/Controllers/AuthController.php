@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-class AuthController extends Controller{
-    public function showLoginForm(){
+class AuthController extends Controller
+{
+    public function showLoginForm()
+    {
         return view('auth.login');
     }
 
@@ -22,10 +24,10 @@ class AuthController extends Controller{
         // Intentar autenticar al usuario
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
-            
             // Regenerar la sesión
             $request->session()->regenerate();
-
+            $request->session()->put('id', $user->id);
+            $request->session()->put('nombre', $user->nombre);
             // Redirigir según el rol
             if ($user->rol_id == 1) {
                 return redirect()->intended('/admin');
@@ -33,37 +35,41 @@ class AuthController extends Controller{
                 return redirect()->intended('/restaurantes');
             }
         }
+        echo "a";
+        die();
 
         // Si las credenciales no coinciden, devolver el error
         return back()->withErrors([
             'email' => 'Las credenciales no coinciden con nuestros registros.',
         ]);
     }
-    
 
-    public function showRegisterForm(){
+
+    public function showRegisterForm()
+    {
         return view('auth.register');
     }
 
-public function register(Request $request)
-{
-    $request->validate([
-        'nombre' => 'required|unique:usuarios,nombre',
-        'email' => 'required|email|unique:usuarios,email',
-        'password' => 'required|min:6|confirmed', // Cambiado de 'contra' a 'password'
-    ]);
+    public function register(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required|unique:usuarios,nombre',
+            'email' => 'required|email|unique:usuarios,email',
+            'password' => 'required|min:6|confirmed', // Cambiado de 'contra' a 'password'
+        ]);
 
-    $user = User::create([
-        'nombre' => $request->nombre,
-        'email' => $request->email,
-        'password' => Hash::make($request->password), // Cambiado de 'contra' a 'password'
-        'rol_id' => 2, 
-    ]);
+        $user = User::create([
+            'nombre' => $request->nombre,
+            'email' => $request->email,
+            'password' => Hash::make($request->password), // Cambiado de 'contra' a 'password'
+            'rol_id' => 2,
+        ]);
 
-    Auth::login($user);
-    return redirect('/restaurantes');
-}
-    public function logout(Request $request){
+        Auth::login($user);
+        return redirect('/restaurantes');
+    }
+    public function logout(Request $request)
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

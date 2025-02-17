@@ -15,7 +15,7 @@
         <nav class="nav">
             <div class="logo"><img src="{{ asset('img/logo.png') }}" alt="Logo"></div>
             <div class="nav-links">
-                <p id="usuarioNombre">Juan</p>
+                <p id="usuarioNombre">{{ session('nombre') }}</p>
                 <a href="{{ route('logout') }}">Salir</a>
             </div>
         </nav>
