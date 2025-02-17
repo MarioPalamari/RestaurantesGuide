@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Usuarios</title>
+    <link rel="stylesheet" href="{{ asset('css/crud-style.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -11,60 +12,75 @@
 
 </head>
 <body>
-
-<div class="container mt-5">
-    <h1>Gestión de Usuarios</h1>
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createUserModal">Crear Usuario</button>
-
-    <!-- Filtros -->
-    <div class="row mb-3">
-        <div class="col-md-3">
-            <label for="filtroNombre">Nombre</label>
-            <input type="text" id="filtroNombre" class="form-control" placeholder="Filtrar por nombre">
-        </div>
-        <div class="col-md-3">
-            <label for="filtroEmail">Email</label>
-            <input type="text" id="filtroEmail" class="form-control" placeholder="Filtrar por email">
-        </div>
-        <div class="col-md-3">
-            <label for="filtroRol">Rol</label>
-            <select id="filtroRol" class="form-control">
-                <option value="">Todos</option>
-                @foreach($roles as $role)
-                <option value="{{ $role->id }}">{{ $role->nombre }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-md-3">
-            <button id="aplicarFiltros" class="btn btn-primary mt-4">Aplicar Filtros</button>
-            <button id="limpiarFiltros" class="btn btn-secondary mt-4">Limpiar Filtros</button>
-        </div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-black justify-content-between">
+        <a style="padding-left: 1%;">
+            <img src="{{ asset('img/logo2.png') }}" alt="Logo"  class="d-inline-block align-top">
+        </a>
+        <h3 class="text-white">Gestión de Usuarios</h3>
+        <a style="padding-right: 1%;"href="{{ route('logout') }}">
+            <img src="{{ asset('img/logout.png') }}" alt="Logo"  class="d-inline-block align-top pr-5">
+        </a>
+    </nav>
+    <div class="mt-5 pr-2 ml-2">
+    <div class="m-3 d-flex justify-content-between">
+        <button class="btn btn-warning fw-bold px-4 py-2 rounded-0 text-uppercase" data-bs-toggle="modal" data-bs-target="#createUserModal">Crear Usuario</button>
+        <a class="icon-back" href="{{ route('admin.admin') }}"><img src="{{ asset('img/go_back.png') }}" class="icon-back" alt=""></a>
     </div>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    Nombre
-                    <button class="btn btn-sm btn-sort" data-column="nombre" data-order="asc">▲</button>
-                    <button class="btn btn-sm btn-sort" data-column="nombre" data-order="desc">▼</button>
-                </th>
-                <th>
-                    Email
-                    <button class="btn btn-sm btn-sort" data-column="email" data-order="asc">▲</button>
-                    <button class="btn btn-sm btn-sort" data-column="email" data-order="desc">▼</button>
-                </th>
-                <th>
-                    Rol
-                    <button class="btn btn-sm btn-sort" data-column="rol" data-order="asc">▲</button>
-                    <button class="btn btn-sm btn-sort" data-column="rol" data-order="desc">▼</button>
-                </th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="resultadousuarios">
-        </tbody>
-    </table>
+    <div class="m-3">
+    <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="filtroNombre">Nombre</label>
+                <input type="text" id="filtroNombre" class="form-control" placeholder="Filtrar por nombre">
+            </div>
+            <div class="col-md-3">
+                <label for="filtroEmail">Email</label>
+                <input type="text" id="filtroEmail" class="form-control" placeholder="Filtrar por email">
+            </div>
+            <div class="col-md-3">
+                <label for="filtroRol">Rol</label>
+                <select id="filtroRol" class="form-control">
+                    <option value="">Todos</option>
+                    @foreach($roles as $role)
+                    <option value="{{ $role->id }}">{{ $role->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button id="aplicarFiltros" class="btn btn-warning fw-bold rounded-0 text-uppercase mt-4">Aplicar Filtros</button>
+                <button id="limpiarFiltros"class="btn bg-black text-white fw-bold rounded-0 text-uppercase mt-4">Limpiar Filtros</button>
+            </div>
+        </div>
+        
+    </div>
+    <!-- Filtros -->
+    
+    <div class="m-3">
+    <table class="table text-center">
+            <thead>
+                <tr>
+                    <th>
+                        Nombre
+                        <button class="btn btn-sm btn-sort" data-column="nombre" data-order="asc">▲</button>
+                        <button class="btn btn-sm btn-sort" data-column="nombre" data-order="desc">▼</button>
+                    </th>
+                    <th>
+                        Email
+                        <button class="btn btn-sm btn-sort" data-column="email" data-order="asc">▲</button>
+                        <button class="btn btn-sm btn-sort" data-column="email" data-order="desc">▼</button>
+                    </th>
+                    <th>
+                        Rol
+                        <button class="btn btn-sm btn-sort" data-column="rol" data-order="asc">▲</button>
+                        <button class="btn btn-sm btn-sort" data-column="rol" data-order="desc">▼</button>
+                    </th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="resultadousuarios">
+            </tbody>
+        </table>        
+    </div>
+ 
 </div>
 
 <!-- Modal Crear Usuario -->
