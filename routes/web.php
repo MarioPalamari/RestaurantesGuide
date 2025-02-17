@@ -14,7 +14,9 @@ Route::middleware(['auth'])->group(function () {
     route::controller(RestauranteController::class)->group(function () {
         Route::get('/restaurantes', 'mostrarpagina')->name('restaurantes.restaurantes');
         Route::post('/mostrarrestaurantes', 'mostrarrestaurantes')->name('mostrarrestaurantes');
-        route::post('/restaurantes/{nombre}', 'inforestaurante')->name('restaurante.ver');
+        route::post('/restaurantes/{nombre}', 'mostrarpaginarestaurante')->name('restaurante.ver');
+        route::post('/opinar', 'opinarform');
+        Route::post('/mostrarinforestaurante', 'mostrarinforestaurante');
     });
         // Route::get('/admin-restaurantes','ShowAdminRestaurantes')->name('RestaurantesAdmin');
         Route::controller(AdminController::class)->group(function () {

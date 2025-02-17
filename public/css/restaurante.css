@@ -21,7 +21,6 @@
     background: linear-gradient(to right, #c4c4c4, white);
     padding: 20px;
     border-radius: 8px;
-    max-height: calc(100vh - 40px);
     overflow-y: auto;
     z-index: 10;
 }
@@ -73,7 +72,7 @@
 
 /* Estilo para el enlace de borrar filtros */
 .filtro-borrar button {
-    background:none;
+    background: none;
     border: none;
     align-items: center;
     color: red;
@@ -100,10 +99,10 @@
 /* Estilo para cada restaurante */
 .restaurante {
     position: relative;
-    width: 300px;
+    width: 320px;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: #f2f2f2;
     background-color: #fff;
     cursor: pointer;
     transition: transform 0.3s ease;
@@ -211,96 +210,6 @@
 }
 
 
-/* Css restaurante */
-
-
-/* Estilo de la columna izquierda */
-.izquierda {
-    max-width: 60%;
-}
-
-.izquierda img {
-    width: 100%;
-    border-radius: 8px;
-    margin-top: 20px;
-}
-
-/* Estilo de la columna derecha */
-.derecha {
-    width: 30%;
-    height: 40%;
-    left: 100%;
-    background-color: #f4f4f4;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-/* Caja de calificación */
-.rating {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 15px;
-}
-
-/* Estilo del recuadro amarillo */
-.rating-box {
-    background-color: #e0b34c;
-    padding: 15px;
-    text-align: center;
-    border-radius: 5px;
-    width: 80px;
-}
-
-.rating-number {
-    font-size: 24px;
-    font-weight: bold;
-    display: block;
-}
-
-.rating-text {
-    font-size: 14px;
-}
-
-/* Opiniones */
-.opiniones {
-    text-align: left;
-}
-
-.opiniones-numero {
-    font-size: 30px;
-    font-weight: bold;
-    display: block;
-    text-align: center;
-}
-
-.opiniones-texto {
-    font-size: 14px;
-    display: block;
-    text-align: center;
-}
-
-.opinar {
-    font-size: 14px;
-    color: blue;
-    text-decoration: none;
-}
-
-.opinar:hover {
-    text-decoration: underline;
-}
-
-/* Estilos de enlaces */
-.derecha a {
-    color: black;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.derecha a:hover {
-    text-decoration: underline;
-}
-
 
 .header {
     position: relative;
@@ -389,4 +298,30 @@
 
 .header-btn:hover {
     background: #ffb400;
+}
+
+@media screen and (max-width: 900px) {
+    .contenedor {
+        display: block;
+        margin-top: 0%;
+    }
+
+    .filtros {
+        width: 90%;
+        position: sticky;
+        /* Se elimina sticky para móviles */
+        top: auto;
+        background: #c4c4c4;
+        padding: 15px;
+        margin: 5%;
+        border-radius: 8px;
+    }
+
+    .restaurantes {
+        display: flex;
+        flex-direction: column;
+        /* Los restaurantes se apilan en una sola columna */
+        align-items: center;
+        width: 100%;
+    }
 }

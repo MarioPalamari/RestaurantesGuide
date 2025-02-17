@@ -1,51 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {{-- <title> {{ $restaurante->nombre }}</title> --}}
-    <link rel="stylesheet" href="{{ asset('css/restaurante.css') }}">
+    {{-- <title>{{ $item->nombre }}</title> --}}
+    <link rel="stylesheet" href="{{ asset('css/verrestaurante.css') }}">
 </head>
 
 <body>
-    <div class="contenedor">
-        <!-- Columna izquierda -->
-        <div class="columna izquierda">
-            <h1>{{ $restaurante->nombre }}</h1>
-            <p>{{ $restaurante->descripcion }}</p>
-            <img src="{{ asset('img/' . $restaurante->img) }}" alt="{{ 'Foto de ' . $restaurante->nombre }}">
+
+       <header class="header">
+        <nav class="nav">
+            <div class="logo"><img src="{{ asset('img/logo.png') }}" alt="Logo"></div>
+            <div class="nav-links">
+                <p id="usuarioNombre">Juan</p>
+                <a href="#">Salir</a>
+            </div>
+        </nav>
+        <div class="header-content">
+            <h1 id="bienvenidaRestaurante"></h1>
+            <p>Conoce más de nosotros</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="info">
+            <h1 id="nombreRestaurante"></h1>
+            <p id="descripcionRestaurante"></p>
+            <div class="imagenes">
+                <img id="imgRestaurante" src="" alt="Foto del restaurante">
+            </div>
+
+            <div class="opiniones-section">
+                <h2>Opiniones</h2>
+                <div id="opiniones"></div>
+            </div>
         </div>
 
-        <!-- Columna derecha -->
-        <div class="columna derecha">
-            <div class="rating">
-                <div class="rating-box">
-                    <span class="rating-number">9,8</span>
-                    <span class="rating-text">Sobre <br> 10</span>
+        <div class="sidebar">
+            <div class="rating-box">
+                <div class="rating-value">
+                    <span class="rating-number" id="mediaValoracion"></span>
+                    <span class="rating-text">Sobre <br> 5</span>
                 </div>
-                <div class="opiniones">
-                    <span class="opiniones-numero">245</span>
-                    <span class="opiniones-texto">Opiniones</span>
-                    <a href="#" class="opinar">¿Quieres opinar?</a>
+                <div class="opiniones-box">
+                    <span class="opiniones-numero" id="totalValoraciones"></span><br>
+                    <span class="opiniones-texto">Opiniones</span><br>
+                    <span class="opinar" id="abrirModal">¿Quieres opinar?</span>
                 </div>
             </div>
 
-            <p>📍 Calle de Francia, 6, Pozuelo de Alarcón</p>
-            <p>➕ --</p>
-            <p>📞 913 52 99 94</p>
-            <p>🌐 <a href="#">latxitxarreria.com</a></p>
+            <div class="contacto">
+                <p id="direccionRestaurante">📍 Dirección</p>
+                <p id="extraInfoRestaurante">➕ Información extra</p>
+                <p id="telefonoRestaurante">📞 Teléfono</p>
+                <p>🌐 <a id="webRestaurante" href="#">Sitio web</a></p>
+            </div>
         </div>
     </div>
-    {{ $valoreaciones }}
-    @foreach ($valoreaciones as $valoreacion)
-        <div style="background-color:grey">
-            {{-- <p>{{ $valoreacion->nombre }}</p> --}}
-            <p> {{ $valoreacion->comentario }}</p>
-            <p>{{ $valoreacion->valoracion }}</p>
+
+    <div id="modalValoracion" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Deja tu valoración</h2>
+            <form id="frmopinar" onsubmit="event.preventDefault(); opinarform();">
+                @csrf
+                <p class="clasificacion">
+                    <input id="radio1" type="radio" name="estrellas" value="5"><!--
+                    --><label for="radio1">★</label><!--
+                    --><input id="radio2" type="radio" name="estrellas" value="4"><!--
+                    --><label for="radio2">★</label><!--
+                    --><input id="radio3" type="radio" name="estrellas" value="3"><!--
+                    --><label for="radio3">★</label><!--
+                    --><input id="radio4" type="radio" name="estrellas" value="2"><!--
+                    --><label for="radio4">★</label><!--
+                    --><input id="radio5" type="radio" name="estrellas" value="1"><!--
+                    --><label for="radio5">★</label>
+                </p>
+                <textarea name="comentario" placeholder="Escribe tu comentario..."></textarea>
+                <button type="submit">Enviar Opinión</button>
+            </form>
         </div>
-    @endforeach
+    </div>
 </body>
 
 </html>
+<script src="{{ asset('js/restaurante.js') }}"></script>
