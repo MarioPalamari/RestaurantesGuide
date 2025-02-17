@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('valoraciones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_usuarios')->constrained('usuarios');
-            $table->foreignId('id_restaurante')->constrained('restaurantes');
+            $table->foreignId('id_usuarios')->constrained('usuarios')->onDelete('cascade');
+            $table->foreignId('id_restaurante')->constrained('restaurantes')->onDelete('cascade');
             $table->decimal('valoracion', 2, 1);
             $table->string('comentario')->nullable();
             $table->timestamps();
