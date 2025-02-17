@@ -105,15 +105,21 @@ class RestaurantesAdminController extends Controller
             'img' => $imagenPath
         ]);
     
-        // Redirigir a la lista de restaurantes con mensaje
+        // Devolver respuesta JSON
+        return response()->json([
+            'mensaje' => 'Restaurante actualizado correctamente',
+            'restaurante' => $restaurante
+        ]);
     }
     
 
     public function eliminarRestaurante($id)
     {
-
-        // Eliminar el restaurante
         $eliminar = Restaurante::find($id);
-        $eliminar -> delete();
+        $eliminar->delete();
+        
+        return response()->json([
+            'mensaje' => 'Restaurante eliminado correctamente'
+        ]);
     }
 }

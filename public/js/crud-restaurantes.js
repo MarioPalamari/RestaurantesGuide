@@ -142,6 +142,10 @@ document.getElementById("formEditarRestaurante").addEventListener("submit", func
         alert(data.mensaje);
         cargarRestaurantes();
         document.getElementById("formEditarRestaurante").reset();
+        
+        // Cerrar el modal de edición
+        const modalEditar = bootstrap.Modal.getInstance(document.getElementById('modal-editar'));
+        modalEditar.hide();
     })
     .catch(error => {
         console.error('Error:', error);

@@ -48,7 +48,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="precio_medio">Precio Medio</label>
-                        <input type="number" id="precio_medio" name="precio_medio" class="form-control" placeholder="Precio medio">
+                        <input type="text" id="precio_medio" name="precio_medio" class="form-control" placeholder="Precio medio">
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="img">Imagen</label>
@@ -84,7 +84,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="editPrecioMedio">Precio Medio</label>
-                    <input type="number" id="editPrecioMedio" name="precio_medio" class="form-control" placeholder="Precio medio">
+                    <input type="text" id="editPrecioMedio" name="precio_medio" class="form-control" placeholder="Precio medio">
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="editImg">Imagen</label>
