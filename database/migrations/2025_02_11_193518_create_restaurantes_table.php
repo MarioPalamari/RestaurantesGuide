@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('descripcion');
             $table->decimal('precio_medio', 8, 2);
             $table->string('img')->nullable();
+            $table->string('lugar');
+            $table->string('horario');
+            $table->string('contacto');
+            $table->string('web');
             $table->timestamps();
         });
     }
