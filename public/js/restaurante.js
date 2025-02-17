@@ -46,7 +46,7 @@ function mostrarinforestaurante() {
 
             // Restaurante data
             const restaurante = data.restaurante[0]; // Solo asumimos un restaurante
-            // document.getElementById('restauranteNombre').textContent = restaurante.nombre;
+            document.getElementById('restauranteNombre').textContent = restaurante.nombre;
             document.getElementById('bienvenidaRestaurante').textContent = `Bienvenido a ${restaurante.nombre}`;
             document.getElementById('nombreRestaurante').textContent = restaurante.nombre;
             document.getElementById('descripcionRestaurante').innerHTML = restaurante.descripcion;

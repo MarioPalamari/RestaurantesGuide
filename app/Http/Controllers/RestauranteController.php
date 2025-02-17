@@ -65,7 +65,7 @@ class RestauranteController extends Controller
         // return view('restaurantes.restaurantes', compact('restaurantes'));
     }
 
-    public function mostrarpaginarestaurante($nombre, Request $request)
+    public function mostrarpaginarestaurante( Request $request)
     {
         session(['id_restaurante' => $request->id_restaurante]);
         return view('restaurantes.ver');

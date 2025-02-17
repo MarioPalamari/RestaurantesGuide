@@ -9,9 +9,9 @@
 .contenedor {
     display: flex;
     gap: 20px;
-    padding: 20px;
+    padding: 2%;
     align-items: flex-start;
-    margin-top: 120px;
+    /* margin-top: 120px; */
 }
 
 /* Estilo para la columna de filtros */
@@ -209,8 +209,6 @@
     /* Deshabilita el clic */
 }
 
-
-
 .header {
     position: relative;
     width: 100%;
@@ -222,7 +220,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: white;
+    color: white; 
 }
 
 /* Barra de navegación */

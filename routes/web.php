@@ -17,6 +17,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/restaurantes', 'mostrarpagina')->name('restaurantes.restaurantes');
         Route::post('/mostrarrestaurantes', 'mostrarrestaurantes')->name('mostrarrestaurantes');
         route::post('/restaurantes/{nombre}', 'mostrarpaginarestaurante')->name('restaurante.ver');
+        route::get('/restaurantes/{nombre}', 'mostrarpaginarestaurante')->name('restaurante.ver');
         route::post('/opinar', 'opinarform');
         Route::post('/mostrarinforestaurante', 'mostrarinforestaurante');
     });
@@ -36,3 +37,4 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
