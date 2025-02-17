@@ -2,11 +2,11 @@ window.onload = function () {
     cargarRestaurantes();
 };
 
+// Cargar los restaurantes desde el servidor
 function cargarRestaurantes() {
-    // Obtener el CSRF token del meta tag
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    fetch("/restaurantes/listar")
+    fetch("/restaurantes-admin/listar")
         .then(response => response.json())
         .then(data => {
             const lista = document.getElementById("listaRestaurantes");
@@ -20,81 +20,96 @@ function cargarRestaurantes() {
                     <td>${restaurante.precio_medio}</td>
                     <td>${restaurante.img ? `<img src="img/${restaurante.img}" width="50">` : ''}</td>
                     <td>
+                        <button class="editarBtn" data-id="${restaurante.id}">Editar</button>
                         <button class="eliminarBtn" data-id="${restaurante.id}">Eliminar</button>
                     </td>
                 `;
                 lista.appendChild(row);
             });
 
-            // Agregar el evento de eliminación para los botones generados dinámicamente
+            // Evento de edición
+            document.querySelectorAll('.editarBtn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const id = button.getAttribute('data-id');
+                    cargarRestauranteParaEditar(id);
+                });
+            });
+
+            // Evento de eliminación
             document.querySelectorAll('.eliminarBtn').forEach(button => {
                 button.addEventListener('click', function () {
                     const id = button.getAttribute('data-id');
                     eliminarRestaurante(id, csrfToken);
+                    cargarRestaurantes();
                 });
             });
-        })
+        });
 }
 
+// Cargar los datos del restaurante para editar en el formulario
+function cargarRestauranteParaEditar(id) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch(`/restaurantes-admin/listar/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.restaurante) {
+                // Rellenar los campos con los datos del restaurante
+                document.getElementById("editRestauranteId").value = data.restaurante.id;
+                document.getElementById("editNombre").value = data.restaurante.nombre;
+                document.getElementById("editDescripcion").value = data.restaurante.descripcion;
+                document.getElementById("editPrecioMedio").value = data.restaurante.precio_medio;
+
+                // Mostrar el modal de edición
+                const modalEditar = new bootstrap.Modal(document.getElementById('modal-editar'));
+                modalEditar.show();
+            }
+        })
+    }
+
+// Eliminar restaurante
 function eliminarRestaurante(id, csrfToken) {
     if (confirm("¿Estás seguro de eliminar este restaurante?")) {
-        fetch(`/restaurantes/eliminar/${id}`, {
+        fetch(`/restaurantes-admin/eliminar/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: `_method=DELETE&_token=${csrfToken}`,
         })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.mensaje);
-                cargarRestaurantes(); // Recargar la lista de restaurantes después de la eliminación
-            })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.mensaje);
+            cargarRestaurantes(); // Recargar la lista de restaurantes después de la eliminación
+        });
     }
-    cargarRestaurantes();
-
 }
 
-document.getElementById("formRestaurante").addEventListener("submit", function(event) {
-    event.preventDefault();  // Evita el comportamiento de enviar el formulario de manera tradicional
+// Manejar la creación de restaurante
+document.getElementById("formCrearRestaurante").addEventListener("submit", function(event) {
+    event.preventDefault();
 
     let formData = new FormData();
-    
-    // Obtener los valores de los campos de texto
-    const nombre = document.getElementById("nombre").value;
-    const descripcion = document.getElementById("descripcion").value;
-    const precio_medio = document.getElementById("precio_medio").value;
-    
-    // Verificar si los campos obligatorios tienen valor
-    if (!nombre) {
-        alert("El nombre del restaurante es obligatorio.");
-        return;
-    }
-    
-    // Añadir los campos al FormData
-    formData.append("nombre", nombre);
-    formData.append("descripcion", descripcion);
-    formData.append("precio_medio", precio_medio);
-
-    // Verificar si la imagen fue seleccionada antes de agregarla al FormData
+    formData.append("nombre", document.getElementById("nombre").value);
+    formData.append("descripcion", document.getElementById("descripcion").value);
+    formData.append("precio_medio", document.getElementById("precio_medio").value);
     const img = document.getElementById("img").files[0];
-    if (img) {
+    if (img){
         formData.append("img", img);
-    }
+    } 
 
-    // Realizar la solicitud con FormData
-    fetch("/restaurantes/crear", {
-        method: "POST",  // Usar POST
-        body: formData,  // Enviar los datos con FormData
+    fetch("/restaurantes-admin/crear", {
+        method: "POST",
+        body: formData,
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')  // Añadir el token CSRF
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     })
     .then(response => response.json())
     .then(data => {
         alert(data.mensaje);
-        document.getElementById("formRestaurante").reset();  // Resetear el formulario después de la creación
-        cargarRestaurantes();  // Recargar los restaurantes (si tienes esa función)
+        cargarRestaurantes();
+        document.getElementById("formCrearRestaurante").reset();
     })
     .catch(error => {
         console.error('Error:', error);
@@ -102,3 +117,34 @@ document.getElementById("formRestaurante").addEventListener("submit", function(e
     });
 });
 
+// Manejar la actualización de restaurante
+document.getElementById("formEditarRestaurante").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let formData = new FormData();
+    const id = document.getElementById("editRestauranteId").value;
+    formData.append("id", id);
+    formData.append("nombre", document.getElementById("editNombre").value);
+    formData.append("descripcion", document.getElementById("editDescripcion").value);
+    formData.append("precio_medio", document.getElementById("editPrecioMedio").value);
+    const img = document.getElementById("editImg").files[0];
+    if (img) formData.append("img", img);
+
+    fetch(`/restaurantes-admin/actualizar/${id}`, {
+        method: "post",
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.mensaje);
+        cargarRestaurantes();
+        document.getElementById("formEditarRestaurante").reset();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Hubo un error al actualizar el restaurante');
+    });
+});

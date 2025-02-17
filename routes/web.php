@@ -29,10 +29,11 @@ Route::middleware(['auth'])->group(function () {
         
     Route::controller(RestaurantesAdminController::class)->group(function () {
         Route::match(['get', 'post'], '/admin-restaurante', 'ShowAdminRestaurantes')->name('admin-restaurante');
-        Route::get('/restaurantes/listar', 'listarRestaurantes')->name('restaurantes.listar');
-        Route::post('/restaurantes/crear', 'crearRestaurante')->name('restaurantes.crear');
-        Route::put('/restaurantes/actualizar/{id}', 'actualizarRestaurante')->name('restaurantes.actualizar');
-        Route::delete('/restaurantes/eliminar/{id}', 'eliminarRestaurante')->name('restaurantes.eliminar');
+        Route::get('/restaurantes-admin/listar', 'listarRestaurantes')->name('restaurantes.listar');
+        Route::post('/restaurantes-admin/crear', 'crearRestaurante')->name('restaurantes.crear');
+        Route::post('/restaurantes-admin/actualizar/{id}', 'actualizarRestaurante')->name('restaurantes.actualizar');
+        Route::delete('/restaurantes-admin/eliminar/{id}', 'eliminarRestaurante')->name('restaurantes.eliminar');
+        Route::get('/restaurantes-admin/listar/{id}', [RestaurantesAdminController::class, 'mostrarRestaurante'])->name('restaurantes.show');
     });
     
 });

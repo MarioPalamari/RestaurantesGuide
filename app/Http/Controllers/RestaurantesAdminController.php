@@ -27,7 +27,7 @@ class RestaurantesAdminController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
             'precio_medio' => 'nullable|numeric',
-            'img' => 'nullable|image|max:2048'
+            'img' => 'nullable|image'
         ]);
     
         // Manejo de la imagen si existe
@@ -41,7 +41,7 @@ class RestaurantesAdminController extends Controller
             $imagen->move($rutaDestino, $nombreArchivo);
     
             // Guardar la ruta relativa en la base de datos
-            $imagenPath = 'img/' . $nombreArchivo;
+            $imagenPath =  $nombreArchivo;
         }
     
         // Crear el restaurante
@@ -59,33 +59,55 @@ class RestaurantesAdminController extends Controller
         ]);
     }
     
+    public function mostrarRestaurante($id)
+    {
+        $restaurante = Restaurante::findOrFail($id);
+        return response()->json(['restaurante' => $restaurante]);
+    }
     
     
 
     public function actualizarRestaurante(Request $request, $id)
     {
+        // Validación de los datos
         $request->validate([
             'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
             'precio_medio' => 'nullable|numeric',
-            'img' => 'nullable|image|max:2048'
+            'img' => 'nullable|image|max:2048',
+            
         ]);
-
+    
+        // Buscar el restaurante
         $restaurante = Restaurante::findOrFail($id);
+    
+        // Mantener la imagen existente si no se carga una nueva
         $imagenPath = $restaurante->img;
-
+    
+        // Si hay una nueva imagen, manejarla
         if ($request->hasFile('img')) {
-            $imagenPath = $request->file('img')->store('restaurantes', 'public');
+            $imagen = $request->file('img');
+            $nombreArchivo = time() . '_' . $imagen->getClientOriginalName(); // Nombre único
+            $rutaDestino = public_path('img'); // Ruta en public/img/restaurantes
+    
+            // Mover el archivo a la carpeta public/img/
+            $imagen->move($rutaDestino, $nombreArchivo);
+    
+            // Guardar la ruta relativa en la base de datos
+            $imagenPath =  $nombreArchivo;
         }
-
+    
+        // Actualizar el restaurante
         $restaurante->update([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
             'precio_medio' => $request->precio_medio,
             'img' => $imagenPath
         ]);
-
+    
+        // Redirigir a la lista de restaurantes con mensaje
     }
+    
 
     public function eliminarRestaurante($id)
     {
