@@ -19,7 +19,7 @@
             <div class="logo"><img src="{{ asset('img/logo.png') }}" alt="a"></div>
             <div class="nav-links">
                 <p>Juan</p>
-                <a href="">Salir</a>
+                <a href="{{ route('logout') }}">Salir</a>
             </div>
         </nav>
 

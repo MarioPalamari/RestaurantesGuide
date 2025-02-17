@@ -26,6 +26,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Gestión de Restaurantes</h5>
                         <p class="card-text">Administra los restaurantes del sistema.</p>
+                        <a href="{{ route('admin-restaurante') }}" class="btn btn-primary">Ir a restaurante</a>
                     </div>
                 </div>
             </div>

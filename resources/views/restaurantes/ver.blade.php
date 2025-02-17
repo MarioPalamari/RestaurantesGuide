@@ -5,18 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {{-- <title>{{ $item->nombre }}</title> --}}
+    <title id="restauranteNombre"></title>
     <link rel="stylesheet" href="{{ asset('css/verrestaurante.css') }}">
 </head>
 
 <body>
 
-       <header class="header">
+    <header class="header">
         <nav class="nav">
             <div class="logo"><img src="{{ asset('img/logo.png') }}" alt="Logo"></div>
             <div class="nav-links">
                 <p id="usuarioNombre">Juan</p>
-                <a href="#">Salir</a>
+                <a href="{{ route('logout') }}">Salir</a>
             </div>
         </nav>
         <div class="header-content">

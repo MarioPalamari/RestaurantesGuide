@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('carta', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_restaurante')->constrained('restaurantes');
+            $table->foreignId('id_restaurante')->constrained('restaurantes')->onDelete('cascade');
             $table->string('nombre');
             $table->string('descripcion');
             $table->decimal('precio', 8, 2);
