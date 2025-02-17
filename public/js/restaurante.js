@@ -53,9 +53,9 @@ function mostrarinforestaurante() {
             document.getElementById('imgRestaurante').src = '/img/' + restaurante.img;
             document.getElementById('mediaValoracion').textContent = restaurante.media_valoracion;
             document.getElementById('totalValoraciones').textContent = restaurante.total_valoracion;
-            document.getElementById('direccionRestaurante').textContent = `📍 ${restaurante.direccion}`;
-            document.getElementById('extraInfoRestaurante').textContent = `➕ ${restaurante.extra_info ?? '--'}`;
-            document.getElementById('telefonoRestaurante').textContent = `📞 ${restaurante.telefono}`;
+            document.getElementById('direccionRestaurante').textContent = `📍 ${restaurante.lugar}`;
+            document.getElementById('extraInfoRestaurante').textContent = `➕ ${restaurante.horario ?? '--'}`;
+            document.getElementById('telefonoRestaurante').textContent = `📞 ${restaurante.contacto}`;
             document.getElementById('webRestaurante').textContent = restaurante.web;
             document.getElementById('webRestaurante').href = restaurante.web;
 

@@ -76,11 +76,7 @@ class RestauranteController extends Controller
         $id_restaurante = session('id_restaurante');
 
         $restaurante = Restaurante::select([
-            'restaurantes.id',
-            'restaurantes.nombre',
-            'restaurantes.descripcion',
-            'restaurantes.precio_medio',
-            'restaurantes.img',
+            'restaurantes.*',
             DB::raw('COALESCE(ROUND(AVG(valoraciones.valoracion), 2), 0) AS media_valoracion'),
             DB::raw('COUNT(valoraciones.valoracion) AS total_valoracion'),
         ])
