@@ -298,32 +298,6 @@
     background: #ffb400;
 }
 
-@media screen and (max-width: 900px) {
-    .contenedor {
-        display: block;
-        margin-top: 0%;
-    }
-
-    .filtros {
-        width: 90%;
-        position: sticky;
-        /* Se elimina sticky para móviles */
-        top: auto;
-        background: #c4c4c4;
-        padding: 15px;
-        margin: 5%;
-        border-radius: 8px;
-    }
-
-    .restaurantes {
-        display: flex;
-        flex-direction: column;
-        /* Los restaurantes se apilan en una sola columna */
-        align-items: center;
-        width: 100%;
-    }
-}
-
 /* breadcrumb */
 
 ul.breadcrumb {
@@ -352,4 +326,31 @@ ul.breadcrumb li a {
 ul.breadcrumb li a:hover {
     color: #01447e;
     text-decoration: underline;
+}
+
+@media screen and (max-width: 900px) {
+    .contenedor {
+        display: block;
+        margin-top: 0%;
+    }
+
+    .filtros {
+        width: 90%;
+        position: sticky;
+        /* Se elimina sticky para móviles */
+        top: auto;
+        background: #c4c4c4;
+        padding: 15px;
+        margin: 5%;
+        border-radius: 8px;
+    }
+
+    .restaurante {
+        margin-left: 7%;
+    }
+
+    ul.breadcrumb {
+        list-style: none;
+        margin-left: 7%;
+    }
 }

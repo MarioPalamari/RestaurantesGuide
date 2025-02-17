@@ -29,6 +29,7 @@
         <div class="info">
             <div class="breadcamp">
                 <ul class="breadcrumb">
+                    <li></li>
                     <li><a href="{{ route('restaurantes.restaurantes') }}">Restaurantes</a></li>
                     <li id="nombreRestaurante">Italy</li>
                 </ul>

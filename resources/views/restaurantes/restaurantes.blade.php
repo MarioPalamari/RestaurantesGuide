@@ -62,7 +62,7 @@
         <div>
             <div class="breadcamp">
                 <ul class="breadcrumb">
-                    <li>Restaurantes</li>
+                    <li>/ Restaurantes</li>
                 </ul>
             </div>
             {{-- <h1>Restaurantes</h1> --}}
