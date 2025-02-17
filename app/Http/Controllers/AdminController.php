@@ -14,12 +14,39 @@ class AdminController extends Controller
 
     public function mostrarpagina()
     {
-        return view('admin.users.index');
+        $roles = Rol::all();
+        return view('admin.users.index', compact('roles'));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $usuarios = User::with('rol')->get();
+        $query = User::with('rol');
+
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre', 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->has('email') && $request->email != '') {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        if ($request->has('rol_id') && $request->rol_id != '') {
+            $query->where('rol_id', $request->rol_id);
+        }
+
+        if ($request->has('sort_column') && $request->has('sort_order')) {
+            $column = $request->sort_column;
+            $order = $request->sort_order;
+
+            if ($column === 'rol') {
+                $query->join('roles', 'usuarios.rol_id', '=', 'roles.id')
+                      ->orderBy('roles.nombre', $order);
+            } else {
+                $query->orderBy($column, $order);
+            }
+        }
+
+        $usuarios = $query->get();
         $roles = Rol::all();
     
         return response()->json([
@@ -32,9 +59,9 @@ class AdminController extends Controller
     {
         try {
             $request->validate([
-                'nombre' => 'required',
+                'nombre' => 'required|string|max:255',
                 'email' => 'required|email|unique:usuarios,email',
-                'password' => 'required|min:6',
+                'password' => 'required|string|min:6',
                 'rol_id' => 'required|exists:roles,id'
             ]);
 
@@ -50,10 +77,15 @@ class AdminController extends Controller
                 'message' => 'Usuario creado exitosamente'
             ]);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Hubo un error al crear el usuario'
             ], 500);
         }
     }
@@ -62,9 +94,9 @@ class AdminController extends Controller
     {
         try {
             $request->validate([
-                'nombre' => 'required',
+                'nombre' => 'required|string|max:255',
                 'email' => 'required|email|unique:usuarios,email,' . $user->id,
-                'password' => 'nullable|min:6',
+                'password' => 'nullable|string|min:6',
                 'rol_id' => 'required|exists:roles,id'
             ]);
 
@@ -85,10 +117,15 @@ class AdminController extends Controller
                 'message' => 'Usuario actualizado exitosamente'
             ]);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Hubo un error al actualizar el usuario'
             ], 500);
         }
     }
