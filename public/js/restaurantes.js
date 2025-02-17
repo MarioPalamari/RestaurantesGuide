@@ -42,7 +42,6 @@ function mostrarrestaurantes() {
                 resultado.innerHTML += restauranteHTML;
             });
         })
-        .catch(error => console.error("Hubo un error:", error));
 }
 
 

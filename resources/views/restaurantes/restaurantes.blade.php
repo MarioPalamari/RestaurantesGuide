@@ -10,10 +10,6 @@
 
     <!-- Estilos -->
     <link rel="stylesheet" href="{{ asset('css/restaurante.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -23,7 +19,7 @@
             <div class="logo"><img src="{{ asset('img/logo.png') }}" alt="a"></div>
             <div class="nav-links">
                 <p>Juan</p>
-                <a href="">Salir</a>
+                <a href="{{ route('logout') }}">Salir</a>
             </div>
         </nav>
 

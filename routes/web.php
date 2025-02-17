@@ -13,7 +13,10 @@ Route::middleware(['auth'])->group(function () {
     route::controller(RestauranteController::class)->group(function () {
         Route::get('/restaurantes', 'mostrarpagina')->name('restaurantes.restaurantes');
         Route::post('/mostrarrestaurantes', 'mostrarrestaurantes')->name('mostrarrestaurantes');
-        route::post('/restaurantes/{nombre}', 'inforestaurante')->name('restaurante.ver');
+        route::post('/restaurantes/{nombre}', 'mostrarpaginarestaurante')->name('restaurante.ver');
+        route::get('/restaurantes/{nombre}', 'mostrarpaginarestaurante')->name('restaurante.ver');
+        route::post('/opinar', 'opinarform');
+        Route::post('/mostrarinforestaurante', 'mostrarinforestaurante');
     });
     Route::controller(AdminController::class)->group(function () {
         Route::get('/admin', 'showAdminDashboard')->name('admin.admin');
@@ -46,3 +49,4 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/users/store', [AdminController::class, 'store'])->name('users.store');
     Route::post('/admin/users/update/{user}', [AdminController::class, 'update'])->name('users.update');
     Route::delete('/admin/users/destroy/{user}', [AdminController::class, 'destroy']);
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
