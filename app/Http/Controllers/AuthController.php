@@ -26,6 +26,7 @@ class AuthController extends Controller
             $user = Auth::user();
             // Regenerar la sesión
             $request->session()->regenerate();
+            // Creacion de sesión
             $request->session()->put('id', $user->id);
             $request->session()->put('nombre', $user->nombre);
             // Redirigir según el rol
@@ -35,8 +36,6 @@ class AuthController extends Controller
                 return redirect()->intended('/restaurantes');
             }
         }
-        echo "a";
-        die();
 
         // Si las credenciales no coinciden, devolver el error
         return back()->withErrors([
