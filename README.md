@@ -40,7 +40,7 @@ Este proyecto consiste en la creación de una guía de restaurantes de saborea M
    ```bash
    php artisan serve
    ```
-## Instalación y Ejecución
+## Credenciales
      - Admin:
          Usuario: admin@example.com
          Contraseña: qweQWE123
