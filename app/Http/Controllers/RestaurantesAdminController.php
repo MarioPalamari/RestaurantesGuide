@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Restaurante;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +35,7 @@ class RestaurantesAdminController extends Controller
         // Filtro por etiquetas
         if ($request->has('etiquetas') && !empty($request->etiquetas)) {
             $etiquetasNombres = explode(',', $request->etiquetas);
-            $query->whereHas('etiquetas', function($q) use ($etiquetasNombres) {
+            $query->whereHas('etiquetas', function ($q) use ($etiquetasNombres) {
                 $q->whereIn('nombre', $etiquetasNombres);
             });
         }
@@ -112,26 +113,26 @@ public function crearRestaurante(Request $request)
     {
         $restaurante = Restaurante::with('etiquetas')->findOrFail($id);
         $etiquetas = \App\Models\Etiqueta::all();
-        
+
         // Obtener los IDs de las etiquetas asociadas al restaurante
         $etiquetasAsociadas = $restaurante->etiquetas->pluck('id')->toArray();
-        
+
         // Crear un nuevo array de etiquetas transformadas
-        $etiquetasTransformadas = $etiquetas->map(function($etiqueta) use ($etiquetasAsociadas) {
+        $etiquetasTransformadas = $etiquetas->map(function ($etiqueta) use ($etiquetasAsociadas) {
             return [
                 'id' => $etiqueta->id,
                 'nombre' => $etiqueta->nombre,
                 'selected' => in_array($etiqueta->id, $etiquetasAsociadas)
             ];
         });
-        
+
         // Reemplazar las etiquetas originales con las transformadas
         $restaurante->etiquetas_transformadas = $etiquetasTransformadas;
         
         return response()->json(['restaurante' => $restaurante]);
     }
-    
-    
+
+
 
     public function actualizarRestaurante(Request $request, $id)
     {

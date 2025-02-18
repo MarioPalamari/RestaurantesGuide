@@ -66,7 +66,7 @@ class RestauranteController extends Controller
         // return view('restaurantes.restaurantes', compact('restaurantes'));
     }
 
-    public function mostrarpaginarestaurante(Request $request)
+    public function mostrarpaginarestaurante( Request $request)
     {
         session(['id_restaurante' => $request->id_restaurante]);
         return view('restaurantes.ver');
@@ -135,12 +135,12 @@ class RestauranteController extends Controller
             'restaurantes.img',
             DB::raw('COALESCE(ROUND(AVG(valoraciones.valoracion), 2), 0) AS media_valoracion')
         )
-            ->leftJoin('valoraciones', 'restaurantes.id', '=', 'valoraciones.id_restaurante')
-            ->groupBy('restaurantes.id', 'restaurantes.nombre', 'restaurantes.descripcion', 'restaurantes.precio_medio', 'restaurantes.img')
-            ->orderByDesc('media_valoracion')
-            ->limit(3)
-            ->get();
-
+        ->leftJoin('valoraciones', 'restaurantes.id', '=', 'valoraciones.id_restaurante')
+        ->groupBy('restaurantes.id', 'restaurantes.nombre', 'restaurantes.descripcion', 'restaurantes.precio_medio', 'restaurantes.img')
+        ->orderByDesc('media_valoracion')
+        ->limit(3) 
+        ->get();
+    
         return view('dashboard', compact('restaurantesMejorValorados'));
     }
 

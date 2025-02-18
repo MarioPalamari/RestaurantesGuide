@@ -29,14 +29,7 @@
 
     <div class="container">
         <div class="info">
-            <div class="breadcamp">
-                <ul class="breadcrumb">
-                    <li></li>
-                    <li><a href="{{ route('restaurantes.restaurantes') }}">Restaurantes</a></li>
-                    <li id="nombreRestaurante">Italy</li>
-                </ul>
-            </div>
-            {{-- <h1 id="nombreRestaurante"></h1> --}}
+            <h1 id="nombreRestaurante"></h1>
             <p id="descripcionRestaurante"></p>
             <div class="imagenes">
                 <img id="imgRestaurante" src="" alt="Foto del restaurante">
