@@ -26,7 +26,7 @@
 
         <!-- Contenido del Header -->
         <div class="header-content">
-            <h1>Bienvenido a aborea Madrid</h1>
+            <h1>Bienvenido a Saborea Madrid</h1>
             <p>¿Qué me apetece hoy?</p>
         </div>
     </header>
