@@ -100,7 +100,17 @@ body {
     border-radius: 10px;
     margin: 10px 0;
 }
-
+.texto-opinion{
+    display: inline-block;
+    word-wrap: break-word;
+    max-width: 100%;
+    width: 100%;
+}
+#opiniones {
+    display: flex;
+    flex-direction: column; /* Apilar opiniones verticalmente */
+    gap: 15px; /* Espaciado entre opiniones */
+}
 .stars {
     color: gold;
 }

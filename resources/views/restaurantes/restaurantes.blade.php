@@ -49,7 +49,7 @@
                     <input type="text" name="valoracion" id="valoracion" placeholder="Ej. 4-5">
                 </div>
                 <div class="filtro-submit">
-                    <input type="submit" value="Buscar">
+                    <input type="submit" value="BUSCAR">
                 </div>
                 <div class="filtro-borrar">
                     <button onclick="borrarfiltros();">✖ Borrar filtros</button>
