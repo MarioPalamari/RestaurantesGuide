@@ -128,20 +128,49 @@ function cargarRestauranteParaEditar(id) {
 
 // Eliminar restaurante
 function eliminarRestaurante(id, csrfToken) {
-    if (confirm("¿Estás seguro de eliminar este restaurante?")) {
-        fetch(`/restaurantes-admin/eliminar/${id}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `_method=DELETE&_token=${csrfToken}`,
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.mensaje);
-            cargarRestaurantes(); // Recargar la lista de restaurantes después de la eliminación
-        });
-    }
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/restaurantes-admin/eliminar/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.mensaje) {
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'El restaurante ha sido eliminado.',
+                        'success'
+                    );
+                    cargarRestaurantes();
+                } else {
+                    Swal.fire(
+                        'Error',
+                        'Hubo un problema al eliminar el restaurante.',
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                Swal.fire(
+                    'Error',
+                    'Hubo un problema al eliminar el restaurante: ' + error.message,
+                    'error'
+                );
+            });
+        }
+    });
 }
 
 // Manejar la creación de restaurante
@@ -170,22 +199,34 @@ document.getElementById("formCrearRestaurante").addEventListener("submit", funct
         method: "POST",
         body: formData,
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            "Accept": "application/json"
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
     .then(data => {
-        alert(data.mensaje);
-        cargarRestaurantes();
-        document.getElementById("formCrearRestaurante").reset();
-        
-        // Cerrar el modal de creación
-        const modalCrear = bootstrap.Modal.getInstance(document.getElementById('modal-crear'));
-        modalCrear.hide();
+        if (data.mensaje) {
+            Swal.fire(
+                '¡Creado!',
+                'El restaurante ha sido creado exitosamente.',
+                'success'
+            );
+            cargarRestaurantes();
+            document.querySelector("#modal-crear .btn-close").click();
+            this.reset();
+        }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Hubo un error al crear el restaurante');
+        Swal.fire(
+            'Error',
+            'Hubo un problema al crear el restaurante: ' + error.message,
+            'error'
+        );
     });
 });
 
@@ -193,49 +234,40 @@ document.getElementById("formCrearRestaurante").addEventListener("submit", funct
 document.getElementById("formEditarRestaurante").addEventListener("submit", function(event) {
     event.preventDefault();
 
-    let formData = new FormData();
-    formData.append("id", document.getElementById("editRestauranteId").value);
-    formData.append("nombre", document.getElementById("editNombre").value);
-    formData.append("descripcion", document.getElementById("editDescripcion").value);
-    formData.append("precio_medio", document.getElementById("editPrecioMedio").value);
-    formData.append("lugar", document.getElementById("editLugar").value);
-    formData.append("horario", document.getElementById("editHorario").value);
-    formData.append("contacto", document.getElementById("editContacto").value);
-    formData.append("web", document.getElementById("editWeb").value);
-    
-    // Agregar etiquetas seleccionadas
-    const checkboxes = document.querySelectorAll('input[name="etiquetas[]"]:checked');
-    checkboxes.forEach(checkbox => {
-        formData.append("etiquetas[]", checkbox.value);
-    });
+    let restauranteId = document.getElementById("editRestauranteId").value;
+    let formData = new FormData(this);
 
-    const img = document.getElementById("editImg").files[0];
-    if (img) formData.append("img", img);
-
-    fetch("/restaurantes-admin/actualizar/" + document.getElementById("editRestauranteId").value, {
+    fetch(`/restaurantes-admin/actualizar/${restauranteId}`, {
         method: "POST",
         body: formData,
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+            "Accept": "application/json"
         }
     })
     .then(response => {
         if (!response.ok) {
-            return response.text().then(text => { throw new Error(text) });
+            return response.json().then(err => { throw err; });
         }
         return response.json();
     })
     .then(data => {
-        alert(data.mensaje);
-        cargarRestaurantes();
-        
-        // Cerrar el modal de edición
-        const modalEditar = bootstrap.Modal.getInstance(document.getElementById('modal-editar'));
-        modalEditar.hide();
+        if (data.mensaje) {
+            Swal.fire(
+                '¡Actualizado!',
+                'El restaurante ha sido actualizado exitosamente.',
+                'success'
+            );
+            cargarRestaurantes();
+            document.querySelector("#modal-editar .btn-close").click();
+        }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Hubo un error al actualizar el restaurante: ' + error.message);
+        Swal.fire(
+            'Error',
+            'Hubo un problema al actualizar el restaurante: ' + error.message,
+            'error'
+        );
     });
 });
 
