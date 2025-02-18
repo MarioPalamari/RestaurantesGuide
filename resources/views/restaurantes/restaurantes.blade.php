@@ -19,7 +19,8 @@
             <div class="logo"><img src="{{ asset('img/logo.png') }}" alt="a"></div>
             <div class="nav-links">
                 <p style="margin: 0; padding-right: 10px;">{{ session('nombre') }}</p>
-                <a href="{{ route('logout') }}"><img src="{{ asset('img/logout.png') }}" alt="Logo" class="d-inline-block align-top"></a>
+                <a href="{{ route('logout') }}"><img src="{{ asset('img/logout.png') }}" alt="Logo"
+                        class="d-inline-block align-top"></a>
             </div>
         </nav>
 
@@ -60,7 +61,12 @@
 
         <!-- Restaurantes -->
         <div>
-            <h1>Restaurantes</h1>
+            <div class="breadcamp">
+                <ul class="breadcrumb">
+                    <li></li>
+                    <li>Restaurantes</li>
+                </ul>
+            </div>
             <div class="restaurantes" id="restaurantes"></div>
         </div>
     </div>
