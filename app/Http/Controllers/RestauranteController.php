@@ -66,14 +66,24 @@ class RestauranteController extends Controller
         // return view('restaurantes.restaurantes', compact('restaurantes'));
     }
 
-    public function mostrarpaginarestaurante( Request $request)
+    public function mostrarpaginarestaurante(Request $request)
     {
+        // Verificar si el usuario está autenticado
+        if (!session()->has('id')) {
+            return redirect()->route('login'); // Redirigir al login si no hay sesión
+        }
+
         session(['id_restaurante' => $request->id_restaurante]);
         return view('restaurantes.ver');
     }
 
     public function mostrarinforestaurante()
     {
+        // Verificar si el usuario está autenticado
+        if (!session()->has('id')) {
+            return response()->json(['error' => 'Usuario no autenticado'], 401);
+        }
+
         $id = session('id');
         $id_restaurante = session('id_restaurante');
 
@@ -106,20 +116,28 @@ class RestauranteController extends Controller
 
     public function opinarform(Request $request)
     {
+        // Verificar si el usuario está autenticado
+        if (!session()->has('id')) {
+            return response()->json(['error' => 'Usuario no autenticado'], 401);
+        }
+
+        $id_usuario = session('id');
+        $id_restaurante = session('id_restaurante');
+
         if (isset($request->id)) {
             $resultado = Valoracion::find($request->id);
             $resultado->valoracion = $request->estrellas;
             $resultado->comentario = $request->comentario;
-            $resultado->id_usuarios = session('id');
-            $resultado->id_restaurante = session('id_restaurante');
+            $resultado->id_usuarios = $id_usuario;
+            $resultado->id_restaurante = $id_restaurante;
             $resultado->save();
             echo "ok";
         } else {
             $resultado = new Valoracion();
             $resultado->valoracion = $request->estrellas;
             $resultado->comentario = $request->comentario;
-            $resultado->id_usuarios = session('id');
-            $resultado->id_restaurante = session('id_restaurante');
+            $resultado->id_usuarios = $id_usuario;
+            $resultado->id_restaurante = $id_restaurante;
             $resultado->save();
         }
         echo "ok";

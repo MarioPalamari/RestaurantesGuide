@@ -25,10 +25,11 @@ class AuthController extends Controller{
             
             // Regenerar la sesión
             $request->session()->regenerate();
-    
-            // 🔹 Guardar el nombre del usuario en la sesión
-            $request->session()->put('id', $user->id);
-            $request->session()->put('nombre', $user->nombre);
+
+            // Guardar el ID y nombre del usuario en la sesión
+            session(['id' => $user->id]);
+            session(['nombre' => $user->nombre]);
+
             // Redirigir según el rol
             if ($user->rol_id == 1) {
                 return redirect()->intended('/admin');

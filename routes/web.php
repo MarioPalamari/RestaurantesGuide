@@ -10,15 +10,16 @@ use App\Http\Controllers\RestaurantesAdminController;
 // })->name('restaurantes');
 Route::middleware(['auth'])->group(function () {
     // Rutas de restaurantes, dentro del middleware de autenticación
-    route::controller(RestauranteController::class)->group(function () {
+    Route::controller(RestauranteController::class)->group(function () {
         Route::get('/restaurantes', 'mostrarpagina')->name('restaurantes.restaurantes');
         Route::post('/mostrarrestaurantes', 'mostrarrestaurantes')->name('mostrarrestaurantes');
-        route::post('/restaurantes/{nombre}', 'mostrarpaginarestaurante')->name('restaurante.ver');
-        route::get('/restaurantes/{nombre}', 'mostrarpaginarestaurante')->name('restaurante.ver');
-        route::post('/opinar', 'opinarform');
+        Route::post('/restaurantes/{nombre}', 'mostrarpaginarestaurante')->name('restaurante.ver');
+        Route::get('/restaurantes/{nombre}', 'mostrarpaginarestaurante')->name('restaurante.ver');
+        Route::post('/opinar', 'opinarform');
         Route::post('/mostrarinforestaurante', 'mostrarinforestaurante');
-        route::post('/eliminaropinion', 'eliminaropinion');
-        route::post('/editaropinar', 'datosopinar');
+        Route::post('/eliminaropinion', 'eliminaropinion');
+        Route::post('/editaropinar', 'datosopinar');
+        Route::get('/restaurantes/ver', 'mostrarpaginarestaurante')->name('restaurantes.ver');
     });
     Route::controller(AdminController::class)->group(function () {
         Route::get('/admin', 'showAdminDashboard')->name('admin.admin');

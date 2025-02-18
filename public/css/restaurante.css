@@ -274,7 +274,13 @@
 .nav-links {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
+}
+
+.nav-links p {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
 }
 
 .nav-links a {
@@ -286,6 +292,10 @@
 
 .nav-links a:hover {
     color: #f8d210;
+}
+
+.nav-links a img {
+    vertical-align: middle;
 }
 
 /* Contenido del header */
