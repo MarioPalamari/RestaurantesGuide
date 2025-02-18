@@ -176,7 +176,8 @@ class RestaurantesAdminController extends Controller
                 $restaurante->etiquetas()->detach();
             }
             $datos = gerenterestaurante::join('usuarios as u', 'u.id', '=', 'gerente_restaurante.id_usuario')
-                ->select('nombre', 'email')
+                ->join('restaurantes as re', 're.id', '=', 'gerente_restaurante.id_restaurante')
+                ->select('img', 'u.nombre as nombre', 'email')
                 ->where('id_restaurante', $id)
                 ->get();
             $destino = $datos[0];
@@ -188,16 +189,21 @@ class RestaurantesAdminController extends Controller
                 'nombre' => $request->nombre,
                 'descripcion' => $request->descripcion,
                 'precio_medio' => $request->precio_medio,
-                'img' => $imagenPath,
+                'img' => $destino['img'],
                 'lugar' => $request->lugar,
                 'horario' => $request->horario,
                 'contacto' => $request->contacto,
                 'web' => $request->web,
-            ], function ($message) use ($correoDestinatario, $sujeto) {
+            ], function ($message) use ($correoDestinatario, $sujeto, $destino) {
                 $message->to($correoDestinatario)
                     ->subject($sujeto);
-            });
 
+                // Adjuntar la imagen
+                $rutaImagen = public_path('img/' . $destino['img']);
+                if (file_exists($rutaImagen)) {
+                    $message->attach($rutaImagen);
+                }
+            });
             return response()->json([
                 'mensaje' => 'Restaurante actualizado correctamente',
                 'restaurante' => $restaurante
