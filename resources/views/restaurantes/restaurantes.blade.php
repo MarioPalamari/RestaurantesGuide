@@ -10,6 +10,7 @@
 
     <!-- Estilos -->
     <link rel="stylesheet" href="{{ asset('css/restaurante.css') }}">
+    <link rel="icon" href="{{ asset('/img/logo.png') }}" type="image/png">
 </head>
 
 <body>

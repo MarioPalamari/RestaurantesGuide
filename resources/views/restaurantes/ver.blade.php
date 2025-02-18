@@ -8,6 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title id="restauranteNombre"></title>
     <link rel="stylesheet" href="{{ asset('css/verrestaurante.css') }}">
+    <link rel="icon" href="{{ asset('/img/logo.png') }}" type="image/png">
 </head>
 
 <body>
