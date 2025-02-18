@@ -39,9 +39,9 @@ function cargarRestaurantes() {
                     <td>${restaurante.contacto}</td>
                     <td>${restaurante.web}</td>
                     <td>${restaurante.etiquetas.map(etiqueta => etiqueta.nombre).join(', ')}</td>
-                    <td>
-                        <button class="editarBtn" data-id="${restaurante.id}">Editar</button>
-                        <button class="eliminarBtn" data-id="${restaurante.id}">Eliminar</button>
+                    <td class="text-center">
+                        <button class="editarBtn btn btn-warning fw-bold rounded-0 text-uppercase mb-1" data-id="${restaurante.id}">Editar</button>
+                        <button class="eliminarBtn btn bg-black text-white fw-bold rounded-0 text-uppercase btn-delete" data-id="${restaurante.id}">Eliminar</button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -255,14 +255,15 @@ function mostrarRestaurantes(restaurantes) {
             <td>${restaurante.contacto}</td>
             <td>${restaurante.web}</td>
             <td>${restaurante.etiquetas.map(etiqueta => etiqueta.nombre).join(', ')}</td>
-            <td>
-                <button class="editarBtn" data-id="${restaurante.id}">Editar</button>
-                <button class="eliminarBtn" data-id="${restaurante.id}">Eliminar</button>
+            <td class="text-center">
+                <button class="btn btn-warning fw-bold rounded-0 text-uppercase mb-1 btn-edit editarBtn"  data-id="${restaurante.id}">Editar</button>
+                <button class="btn bg-black text-white fw-bold rounded-0 text-uppercase btn-delete eliminarBtn" data-id="${restaurante.id}">Eliminar</button>
             </td>
         `;
         tbody.appendChild(row);
     });
 
+    
     // Agregar eventos a los botones de editar y eliminar
     document.querySelectorAll('.editarBtn').forEach(button => {
         button.addEventListener('click', () => {
@@ -359,7 +360,18 @@ document.addEventListener("click", function(event) {
         .catch(error => console.error("Error:", error));
     }
 });
-
+function toggleCheckboxArea(onlyHide = false) {
+    var checkboxes = document.getElementById("mySelectOptions");
+    var displayValue = checkboxes.style.display;
+  
+    if (displayValue != "block") {
+      if (onlyHide == false) {
+        checkboxes.style.display = "block";
+      }
+    } else {
+      checkboxes.style.display = "none";
+    }
+  }
 function checkboxStatusChange() {
     var multiselect = document.getElementById("mySelectLabel");
     var multiselectOption = multiselect.getElementsByTagName('option')[0];
