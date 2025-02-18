@@ -29,14 +29,7 @@
 
     <div class="container">
         <div class="info">
-            <div class="breadcamp">
-                <ul class="breadcrumb">
-                    <li></li>
-                    <li><a href="{{ route('restaurantes.restaurantes') }}">Restaurantes</a></li>
-                    <li id="nombreRestaurante">Italy</li>
-                </ul>
-            </div>
-            {{-- <h1 id="nombreRestaurante"></h1> --}}
+            <h1 id="nombreRestaurante"></h1>
             <p id="descripcionRestaurante"></p>
             <div class="imagenes">
                 <img id="imgRestaurante" src="" alt="Foto del restaurante">
@@ -67,6 +60,10 @@
                 <p id="telefonoRestaurante">📞 Teléfono</p>
                 <p>🌐 <a id="webRestaurante" href="#">Sitio web</a></p>
             </div>
+
+            <div class="contacto" id="mostrarredsocial">
+
+            </div>
         </div>
     </div>
 
@@ -92,7 +89,6 @@
                 <textarea id="inputComentario" name="comentario" placeholder="Escribe tu comentario..."></textarea>
                 <button type="submit">Enviar Opinión</button>
             </form>
-
         </div>
     </div>
 </body>

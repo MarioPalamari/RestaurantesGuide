@@ -26,7 +26,7 @@
 
         <!-- Contenido del Header -->
         <div class="header-content">
-            <h1>Bienvenido a Saborea Madrid</h1>
+            <h1>Bienvenido a aborea Madrid</h1>
             <p>¿Qué me apetece hoy?</p>
         </div>
     </header>
@@ -61,12 +61,7 @@
 
         <!-- Restaurantes -->
         <div>
-            <div class="breadcamp">
-                <ul class="breadcrumb">
-                    <li>/ Restaurantes</li>
-                </ul>
-            </div>
-            {{-- <h1>Restaurantes</h1> --}}
+            <h1>Restaurantes</h1>
             <div class="restaurantes" id="restaurantes"></div>
         </div>
     </div>
