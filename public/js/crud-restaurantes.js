@@ -262,6 +262,7 @@ if (editForm) {
 }
 
 function mostrarRestaurantes(restaurantes) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const tbody = document.getElementById('listaRestaurantes');
     tbody.innerHTML = '';
 
