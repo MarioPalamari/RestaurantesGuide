@@ -18,10 +18,40 @@ class RestaurantesAdminController extends Controller
         return view('admin.admin-restaurante', compact('restaurantes', 'etiquetas'));
     }
 
-    public function listarRestaurantes()
+    public function listarRestaurantes(Request $request)
     {
-        $restaurantes = Restaurante::with('etiquetas')->get();
-        return response()->json(['restaurantes' => $restaurantes]);
+        $query = Restaurante::with('etiquetas');
+
+        // Filtro por nombre
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre', 'like', '%' . $request->nombre . '%');
+        }
+
+        // Filtro por lugar
+        if ($request->has('lugar') && $request->lugar != '') {
+            $query->where('lugar', 'like', '%' . $request->lugar . '%');
+        }
+
+        // Filtro por etiquetas
+        if ($request->has('etiquetas') && !empty($request->etiquetas)) {
+            $etiquetasNombres = explode(',', $request->etiquetas);
+            $query->whereHas('etiquetas', function($q) use ($etiquetasNombres) {
+                $q->whereIn('nombre', $etiquetasNombres);
+            });
+        }
+
+        // Ordenación
+        if ($request->has('sort_column') && $request->has('sort_order')) {
+            $query->orderBy($request->sort_column, $request->sort_order);
+        }
+
+        $restaurantes = $query->get();
+        $etiquetas = \App\Models\Etiqueta::all();
+
+        return response()->json([
+            'restaurantes' => $restaurantes,
+            'etiquetas' => $etiquetas
+        ]);
     }
     public function crearRestaurante(Request $request)
     {

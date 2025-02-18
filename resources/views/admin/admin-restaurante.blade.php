@@ -3,56 +3,84 @@
     <title>Administrar Restaurantes</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Agregar el archivo CSS personalizado -->
+    <link rel="stylesheet" href="{{ asset('css/crud-style.css') }}">
     <!-- Agregar los scripts de Bootstrap 5 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
-<div class="mt-5 m-2">
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modal-crear">Crear restaurante</button>
-    <h2>Administrar Restaurantes</h2>
-</div>
+<div class="container mt-5">
+    <h1>Gestión de Restaurantes</h1>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modal-crear">Crear Restaurante</button>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Precio Medio</th>
-            <th>Imagen</th>
-            <th>Ubicación</th>
-            <th>Horario</th>
-            <th>Contacto</th>
-            <th>Web</th>
-            <th>Etiquetas</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody id="listaRestaurantes">
-        @foreach($restaurantes as $restaurante)
+    <!-- Filtros -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label for="filtroNombre">Nombre</label>
+            <input type="text" id="filtroNombre" class="form-control" placeholder="Filtrar por nombre">
+        </div>
+        <div class="col-md-4">
+            <label for="filtroLugar">Ubicación</label>
+            <input type="text" id="filtroLugar" class="form-control" placeholder="Filtrar por ubicación">
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex align-items-end">
+                <div class="flex-grow-1 me-2">
+                    <label for="myMultiselect">Etiquetas</label>
+                    <div id="myMultiselect" class="multiselect">
+                        <div id="mySelectLabel" class="selectBox" onclick="toggleCheckboxArea()">
+                            <select class="form-select">
+                                <option>Seleccionar etiquetas</option>
+                            </select>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="mySelectOptions">
+                            @foreach($etiquetas as $etiqueta)
+                            <label for="etiqueta_{{ $etiqueta->id }}">
+                                <input type="checkbox" id="etiqueta_{{ $etiqueta->id }}" 
+                                       onchange="checkboxStatusChange()" 
+                                       value="{{ $etiqueta->id }}" />
+                                {{ $etiqueta->nombre }}
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button id="limpiarFiltros" class="btn btn-secondary" style="height: 38px;">
+                        Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
             <tr>
-                <td>{{ $restaurante->nombre }}</td>
-                <td>{{ $restaurante->descripcion }}</td>
-                <td>{{ $restaurante->precio_medio }}</td>
-                <td>
-                    @if($restaurante->img)
-                        <img src="{{ asset('img/' . $restaurante->img) }}" width="50">
-                    @endif
-                </td>
-                <td>{{ $restaurante->lugar }}</td>
-                <td>{{ $restaurante->horario }}</td>
-                <td>{{ $restaurante->contacto }}</td>
-                <td>{{ $restaurante->web }}</td>
-                <td>{{ $restaurante->etiquetas->pluck('nombre')->join(', ') }}</td>
-                <td>
-                    <button class="editarBtn" data-id="{{ $restaurante->id }}">Editar</button>
-                    <button class="eliminarBtn" data-id="{{ $restaurante->id }}">Eliminar</button>
-                </td>
+                <th>
+                    Nombre
+                    <button class="btn btn-sm btn-sort" data-column="nombre" data-order="asc">▲</button>
+                    <button class="btn btn-sm btn-sort" data-column="nombre" data-order="desc">▼</button>
+                </th>
+                <th>Descripción</th>
+                <th>Precio Medio</th>
+                <th>Imagen</th>
+                <th>Ubicación</th>
+                <th>Horario</th>
+                <th>Contacto</th>
+                <th>Web</th>
+                <th>Etiquetas</th>
+                <th>Acciones</th>
             </tr>
-        @endforeach
-    </tbody>
-</table>
+        </thead>
+        <tbody id="listaRestaurantes">
+            <!-- La lista se cargará dinámicamente -->
+        </tbody>
+    </table>
+</div>
 
 <!-- Modal para Crear Restaurante -->
 <div class="modal fade" id="modal-crear" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
@@ -184,6 +212,64 @@
 </div>
 
 <script  src="{{ asset('js/crud-restaurantes.js') }}"></script>
+
+<script>
+window.onload = (event) => {
+  initMultiselect();
+};
+
+function initMultiselect() {
+  checkboxStatusChange();
+
+  document.addEventListener("click", function(evt) {
+    var flyoutElement = document.getElementById('myMultiselect'),
+      targetElement = evt.target; // clicked element
+
+    do {
+      if (targetElement == flyoutElement) {
+        return;
+      }
+      targetElement = targetElement.parentNode;
+    } while (targetElement);
+
+    toggleCheckboxArea(true);
+  });
+}
+
+function checkboxStatusChange() {
+  var multiselect = document.getElementById("mySelectLabel");
+  var multiselectOption = multiselect.getElementsByTagName('option')[0];
+
+  var values = [];
+  var checkboxes = document.getElementById("mySelectOptions");
+  var checkedCheckboxes = checkboxes.querySelectorAll('input[type=checkbox]:checked');
+
+  for (const item of checkedCheckboxes) {
+    var checkboxValue = item.getAttribute('value');
+    values.push(checkboxValue);
+  }
+
+  var dropdownValue = "Seleccionar etiquetas";
+  if (values.length > 0) {
+    dropdownValue = values.join(', ');
+  }
+
+  multiselectOption.innerText = dropdownValue;
+}
+
+function toggleCheckboxArea(onlyHide = false) {
+  var checkboxes = document.getElementById("mySelectOptions");
+  var displayValue = checkboxes.style.display;
+
+  if (displayValue != "block") {
+    if (onlyHide == false) {
+      checkboxes.style.display = "block";
+    }
+  } else {
+    checkboxes.style.display = "none";
+  }
+}
+</script>
 
 </body>
 </html>
