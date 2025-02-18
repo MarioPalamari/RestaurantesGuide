@@ -13,13 +13,15 @@ class RestaurantesAdminController extends Controller
 {
     public function ShowAdminRestaurantes()
     {
-        return view('admin.admin-restaurante'); // Asegúrate de tener esta vista
+        $restaurantes = Restaurante::with('etiquetas')->get();
+        $etiquetas = \App\Models\Etiqueta::all();
+        return view('admin.admin-restaurante', compact('restaurantes', 'etiquetas'));
     }
 
     public function listarRestaurantes()
     {
-        $restaurantes = Restaurante::all();
-        return response()->json($restaurantes);
+        $restaurantes = Restaurante::with('etiquetas')->get();
+        return response()->json(['restaurantes' => $restaurantes]);
     }
     public function crearRestaurante(Request $request)
     {
@@ -27,32 +29,39 @@ class RestaurantesAdminController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
             'precio_medio' => 'nullable|numeric',
-            'img' => 'nullable|image'
+            'img' => 'nullable|image|max:2048',
+            'lugar' => 'nullable|string',
+            'horario' => 'nullable|string',
+            'contacto' => 'nullable|string',
+            'web' => 'nullable|url',
+            'etiquetas' => 'nullable|array'
         ]);
     
-        // Manejo de la imagen si existe
         $imagenPath = null;
         if ($request->hasFile('img')) {
             $imagen = $request->file('img');
-            $nombreArchivo = time() . '_' . $imagen->getClientOriginalName(); // Nombre único
-            $rutaDestino = public_path('img'); // Ruta en public/img/restaurantes
-    
-            // Mover el archivo a la carpeta public/img/
+            $nombreArchivo = time() . '_' . $imagen->getClientOriginalName();
+            $rutaDestino = public_path('img');
             $imagen->move($rutaDestino, $nombreArchivo);
-    
-            // Guardar la ruta relativa en la base de datos
-            $imagenPath =  $nombreArchivo;
+            $imagenPath = $nombreArchivo;
         }
     
-        // Crear el restaurante
         $restaurante = Restaurante::create([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
             'precio_medio' => $request->precio_medio,
-            'img' => $imagenPath
+            'img' => $imagenPath,
+            'lugar' => $request->lugar,
+            'horario' => $request->horario,
+            'contacto' => $request->contacto,
+            'web' => $request->web
         ]);
     
-        // Respuesta en formato JSON
+        // Asociar etiquetas
+        if ($request->has('etiquetas')) {
+            $restaurante->etiquetas()->attach($request->etiquetas);
+        }
+    
         return response()->json([
             'mensaje' => 'Restaurante creado correctamente',
             'restaurante' => $restaurante
@@ -61,7 +70,29 @@ class RestaurantesAdminController extends Controller
     
     public function mostrarRestaurante($id)
     {
-        $restaurante = Restaurante::findOrFail($id);
+        $restaurante = Restaurante::with('etiquetas')->findOrFail($id);
+        $etiquetas = \App\Models\Etiqueta::all();
+        
+        // Obtener los IDs de las etiquetas asociadas al restaurante
+        $etiquetasAsociadas = $restaurante->etiquetas->pluck('id')->toArray();
+        
+        // Crear un nuevo array de etiquetas transformadas
+        $etiquetasTransformadas = $etiquetas->map(function($etiqueta) use ($etiquetasAsociadas) {
+            return [
+                'id' => $etiqueta->id,
+                'nombre' => $etiqueta->nombre,
+                'selected' => in_array($etiqueta->id, $etiquetasAsociadas)
+            ];
+        });
+        
+        // Reemplazar las etiquetas originales con las transformadas
+        $restaurante->etiquetas_transformadas = $etiquetasTransformadas;
+        
+        \Log::info('Restaurante con etiquetas transformadas:', [
+            'restaurante' => $restaurante->makeHidden('etiquetas')->toArray(),
+            'etiquetas_transformadas' => $etiquetasTransformadas
+        ]);
+        
         return response()->json(['restaurante' => $restaurante]);
     }
     
@@ -69,47 +100,59 @@ class RestaurantesAdminController extends Controller
 
     public function actualizarRestaurante(Request $request, $id)
     {
-        // Validación de los datos
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'precio_medio' => 'nullable|numeric',
-            'img' => 'nullable|image|max:2048',
-            
-        ]);
-    
-        // Buscar el restaurante
-        $restaurante = Restaurante::findOrFail($id);
-    
-        // Mantener la imagen existente si no se carga una nueva
-        $imagenPath = $restaurante->img;
-    
-        // Si hay una nueva imagen, manejarla
-        if ($request->hasFile('img')) {
-            $imagen = $request->file('img');
-            $nombreArchivo = time() . '_' . $imagen->getClientOriginalName(); // Nombre único
-            $rutaDestino = public_path('img'); // Ruta en public/img/restaurantes
-    
-            // Mover el archivo a la carpeta public/img/
-            $imagen->move($rutaDestino, $nombreArchivo);
-    
-            // Guardar la ruta relativa en la base de datos
-            $imagenPath =  $nombreArchivo;
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string',
+                'precio_medio' => 'nullable|numeric',
+                'img' => 'nullable|image|max:2048',
+                'lugar' => 'nullable|string',
+                'horario' => 'nullable|string',
+                'contacto' => 'nullable|string',
+                'web' => 'nullable|url',
+                'etiquetas' => 'nullable|array'
+            ]);
+
+            $restaurante = Restaurante::findOrFail($id);
+
+            $imagenPath = $restaurante->img;
+            if ($request->hasFile('img')) {
+                $imagen = $request->file('img');
+                $nombreArchivo = time() . '_' . $imagen->getClientOriginalName();
+                $rutaDestino = public_path('img');
+                $imagen->move($rutaDestino, $nombreArchivo);
+                $imagenPath = $nombreArchivo;
+            }
+
+            $restaurante->update([
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'precio_medio' => $request->precio_medio,
+                'img' => $imagenPath,
+                'lugar' => $request->lugar,
+                'horario' => $request->horario,
+                'contacto' => $request->contacto,
+                'web' => $request->web
+            ]);
+
+            // Sincronizar etiquetas
+            if ($request->has('etiquetas')) {
+                $restaurante->etiquetas()->sync($request->etiquetas);
+            } else {
+                $restaurante->etiquetas()->detach();
+            }
+
+            return response()->json([
+                'mensaje' => 'Restaurante actualizado correctamente',
+                'restaurante' => $restaurante
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error al actualizar restaurante:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'mensaje' => 'Error al actualizar el restaurante',
+                'error' => $e->getMessage()
+            ], 500);
         }
-    
-        // Actualizar el restaurante
-        $restaurante->update([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'precio_medio' => $request->precio_medio,
-            'img' => $imagenPath
-        ]);
-    
-        // Devolver respuesta JSON
-        return response()->json([
-            'mensaje' => 'Restaurante actualizado correctamente',
-            'restaurante' => $restaurante
-        ]);
     }
     
 

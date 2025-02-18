@@ -15,7 +15,11 @@ class Restaurante extends Model
         'nombre',
         'descripcion',
         'precio_medio',
-        'img'
+        'img',
+        'lugar',
+        'horario',
+        'contacto',
+        'web'
     ];
 
     public function cartas()
