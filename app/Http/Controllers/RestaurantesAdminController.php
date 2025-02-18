@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Restaurante;
-
+use Illuminate\Support\Facades\DB;
 
 class RestaurantesAdminController extends Controller
 {
@@ -53,8 +52,10 @@ class RestaurantesAdminController extends Controller
             'etiquetas' => $etiquetas
         ]);
     }
-    public function crearRestaurante(Request $request)
-    {
+public function crearRestaurante(Request $request)
+{
+    DB::beginTransaction();
+    try {
         $request->validate([
             'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
@@ -66,7 +67,7 @@ class RestaurantesAdminController extends Controller
             'web' => 'nullable|url',
             'etiquetas' => 'nullable|array'
         ]);
-    
+
         $imagenPath = null;
         if ($request->hasFile('img')) {
             $imagen = $request->file('img');
@@ -75,7 +76,7 @@ class RestaurantesAdminController extends Controller
             $imagen->move($rutaDestino, $nombreArchivo);
             $imagenPath = $nombreArchivo;
         }
-    
+
         $restaurante = Restaurante::create([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
@@ -86,17 +87,26 @@ class RestaurantesAdminController extends Controller
             'contacto' => $request->contacto,
             'web' => $request->web
         ]);
-    
-        // Asociar etiquetas
+
+        // Asociar etiquetas si existen
         if ($request->has('etiquetas')) {
             $restaurante->etiquetas()->attach($request->etiquetas);
         }
-    
+
+        DB::commit();
+
         return response()->json([
             'mensaje' => 'Restaurante creado correctamente',
             'restaurante' => $restaurante
         ]);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'mensaje' => 'Error al crear el restaurante',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
     
     public function mostrarRestaurante($id)
     {
@@ -118,11 +128,6 @@ class RestaurantesAdminController extends Controller
         // Reemplazar las etiquetas originales con las transformadas
         $restaurante->etiquetas_transformadas = $etiquetasTransformadas;
         
-        \Log::info('Restaurante con etiquetas transformadas:', [
-            'restaurante' => $restaurante->makeHidden('etiquetas')->toArray(),
-            'etiquetas_transformadas' => $etiquetasTransformadas
-        ]);
-        
         return response()->json(['restaurante' => $restaurante]);
     }
     
@@ -130,6 +135,7 @@ class RestaurantesAdminController extends Controller
 
     public function actualizarRestaurante(Request $request, $id)
     {
+        DB::beginTransaction();
         try {
             $request->validate([
                 'nombre' => 'required|string|max:255',
@@ -142,9 +148,9 @@ class RestaurantesAdminController extends Controller
                 'web' => 'nullable|url',
                 'etiquetas' => 'nullable|array'
             ]);
-
+    
             $restaurante = Restaurante::findOrFail($id);
-
+    
             $imagenPath = $restaurante->img;
             if ($request->hasFile('img')) {
                 $imagen = $request->file('img');
@@ -153,7 +159,7 @@ class RestaurantesAdminController extends Controller
                 $imagen->move($rutaDestino, $nombreArchivo);
                 $imagenPath = $nombreArchivo;
             }
-
+    
             $restaurante->update([
                 'nombre' => $request->nombre,
                 'descripcion' => $request->descripcion,
@@ -164,35 +170,59 @@ class RestaurantesAdminController extends Controller
                 'contacto' => $request->contacto,
                 'web' => $request->web
             ]);
-
+    
             // Sincronizar etiquetas
             if ($request->has('etiquetas')) {
                 $restaurante->etiquetas()->sync($request->etiquetas);
             } else {
                 $restaurante->etiquetas()->detach();
             }
-
+    
+            DB::commit();
+    
             return response()->json([
                 'mensaje' => 'Restaurante actualizado correctamente',
                 'restaurante' => $restaurante
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error al actualizar restaurante:', ['error' => $e->getMessage()]);
+            DB::rollBack();
             return response()->json([
                 'mensaje' => 'Error al actualizar el restaurante',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
-    
 
     public function eliminarRestaurante($id)
     {
-        $eliminar = Restaurante::find($id);
-        $eliminar->delete();
-        
-        return response()->json([
-            'mensaje' => 'Restaurante eliminado correctamente'
-        ]);
+        DB::beginTransaction();
+        try {
+            $restaurante = Restaurante::findOrFail($id);
+    
+            // Eliminar registros en tablas relacionadas
+            $restaurante->cartas()->delete();
+            $restaurante->valoraciones()->delete();
+            $restaurante->redesSociales()->detach(); // Al ser belongsToMany, usamos detach()
+            $restaurante->etiquetas()->detach(); // También es belongsToMany, se usa detach()
+    
+            // Ahora sí, eliminar el restaurante
+            $restaurante->delete();
+    
+            DB::commit();
+    
+            return response()->json([
+                'mensaje' => 'Restaurante eliminado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'mensaje' => 'Error al eliminar el restaurante',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+    
+    
+    
+    
 }

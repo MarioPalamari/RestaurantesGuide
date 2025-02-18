@@ -130,19 +130,21 @@ function cargarRestauranteParaEditar(id) {
 function eliminarRestaurante(id, csrfToken) {
     if (confirm("¿Estás seguro de eliminar este restaurante?")) {
         fetch(`/restaurantes-admin/eliminar/${id}`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `_method=DELETE&_token=${csrfToken}`,
+                'X-CSRF-TOKEN': csrfToken,  // Agrega el token CSRF aquí
+                'Content-Type': 'application/json'
+            }
         })
         .then(response => response.json())
         .then(data => {
             alert(data.mensaje);
             cargarRestaurantes(); // Recargar la lista de restaurantes después de la eliminación
-        });
+        })
+        .catch(error => console.error('Error:', error));
     }
 }
+
 
 // Manejar la creación de restaurante
 document.getElementById("formCrearRestaurante").addEventListener("submit", function(event) {

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('restaurante_red_social', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_restaurante')->constrained('restaurantes')->onDelete('cascade');
-            $table->foreignId('id_red_social')->constrained('redes_sociales')->onDelete('cascade');
+            $table->foreignId('id_restaurante')->constrained('restaurantes');
+            $table->foreignId('id_red_social')->constrained('redes_sociales');
             $table->string('url');
             $table->timestamps();
         });
