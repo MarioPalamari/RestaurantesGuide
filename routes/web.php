@@ -8,6 +8,7 @@ use App\Http\Controllers\RestaurantesAdminController;
 // Route::get('/', function () {
 //     return view('restaurantes.restaurantes');
 // })->name('restaurantes');
+
 Route::middleware(['auth'])->group(function () {
     // Rutas de restaurantes, dentro del middleware de autenticación
     Route::controller(RestauranteController::class)->group(function () {
