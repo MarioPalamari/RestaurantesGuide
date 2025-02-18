@@ -44,18 +44,20 @@ function mostrarinforestaurante() {
                 contenido += '<div class="opinion">'
                 contenido += '<h3>' + val.nombre + ' - <span class="stars">' + "⭐".repeat(val.valoracion) + '</span></h3>'
                 contenido += '<p class="fecha">' + new Date(val.created_at).toLocaleDateString() + '</p>'
-                contenido += '<p>' + val.comentario + '</p>'
+                contenido += '<p class="texto-opinion">' + val.comentario + '</p>'
 
                 if (val.id_usuarios == data.id) {
+                    contenido += '<div class="form-opinar">'
                     contenido += '<form id="editaropinar' + val.id + '" method="post" onsubmit="event.preventDefault(); editaropinar(this);">';
                     contenido += '    <input type="hidden" name="id" value="' + val.id + '">';
-                    contenido += '<button>editar</button>'
+                    contenido += '<button>Editar</button>'
 
                     contenido += '</form>';
                     contenido += '<form id="eliminaropinion' + val.id + '" method="post" onsubmit="event.preventDefault(); eliminaropinion(this);">';
                     contenido += '    <input type="hidden" name="id" value="' + val.id + '">';
                     contenido += '<button>Eliminar</button>'
                     contenido += '</form>';
+                    contenido += '</div>'
                 }
                 contenido += '<div>'
                 opinionesContainer.innerHTML += contenido;
