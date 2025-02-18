@@ -33,18 +33,20 @@ function mostrarinforestaurante() {
                 contenido += '<div class="opinion">'
                 contenido += '<h3>' + val.nombre + ' - <span class="stars">' + "⭐".repeat(val.valoracion) + '</span></h3>'
                 contenido += '<p class="fecha">' + new Date(val.created_at).toLocaleDateString() + '</p>'
-                contenido += '<p>' + val.comentario + '</p>'
+                contenido += '<p class="texto-opinion">' + val.comentario + '</p>'
 
                 if (val.id_usuarios == data.id) {
+                    contenido += '<div class="form-opinar">'
                     contenido += '<form id="editaropinar' + val.id + '" method="post" onsubmit="event.preventDefault(); editaropinar(this);">';
                     contenido += '    <input type="hidden" name="id" value="' + val.id + '">';
-                    contenido += '<button>editar</button>'
+                    contenido += '<button>Editar</button>'
 
                     contenido += '</form>';
                     contenido += '<form id="eliminaropinion' + val.id + '" method="post" onsubmit="event.preventDefault(); eliminaropinion(this);">';
                     contenido += '    <input type="hidden" name="id" value="' + val.id + '">';
                     contenido += '<button>Eliminar</button>'
                     contenido += '</form>';
+                    contenido += '</div>'
                 }
                 contenido += '<div>'
                 opinionesContainer.innerHTML += contenido;
@@ -114,36 +116,11 @@ function editaropinar(form) {
         return response.json();
     })
         .then(data => {
-            console.log(data.restaurante);
-            console.log(data.valoraciones);
-
-            // Restaurante data
-            const restaurante = data.restaurante[0]; // Solo asumimos un restaurante
-            document.getElementById('restauranteNombre').textContent = restaurante.nombre;
-            document.getElementById('bienvenidaRestaurante').textContent = `Bienvenido a ${restaurante.nombre}`;
-            document.getElementById('nombreRestaurante').textContent = restaurante.nombre;
-            document.getElementById('descripcionRestaurante').innerHTML = restaurante.descripcion;
-            document.getElementById('imgRestaurante').src = '/img/' + restaurante.img;
-            document.getElementById('mediaValoracion').textContent = restaurante.media_valoracion;
-            document.getElementById('totalValoraciones').textContent = restaurante.total_valoracion;
-            document.getElementById('direccionRestaurante').textContent = `📍 ${restaurante.lugar}`;
-            document.getElementById('extraInfoRestaurante').textContent = `➕ ${restaurante.horario ?? '--'}`;
-            document.getElementById('telefonoRestaurante').textContent = `📞 ${restaurante.contacto}`;
-            document.getElementById('webRestaurante').textContent = restaurante.web;
-            document.getElementById('webRestaurante').href = restaurante.web;
-
-            // Opiniones
-            const opinionesContainer = document.getElementById('opiniones');
-            opinionesContainer.innerHTML = ''; // Limpiar opiniones previas
-            data.valoraciones.forEach(val => {
-                const opinionElement = document.createElement('div');
-                opinionElement.classList.add('opinion');
-                opinionElement.innerHTML = `
-                    <h3>${val.nombre} - <span class="stars">${'⭐'.repeat(val.valoracion)}</span></h3>
-                    <p class="fecha">${new Date(val.created_at).toLocaleDateString()}</p>
-                    <p class="texto-opinion">${val.comentario}</p>
-                `;
-                opinionesContainer.appendChild(opinionElement);
-            });
+            console.log(data)
+            modal.style.display = "flex";
+            inputIdOpinar.value = data.id;
+            document.getElementById("inputComentario").value = data.comentario;
+            let valoracionRedondeada = Math.round(data.valoracion);
+            document.getElementById(`estrella${valoracionRedondeada}`).checked = true;
         })
 }
