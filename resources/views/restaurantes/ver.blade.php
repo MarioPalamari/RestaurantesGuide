@@ -66,6 +66,10 @@
                 <p id="telefonoRestaurante">📞 Teléfono</p>
                 <p>🌐 <a id="webRestaurante" href="#">Sitio web</a></p>
             </div>
+
+            <div class="contacto" id="mostrarredsocial">
+
+            </div>
         </div>
     </div>
 
@@ -91,7 +95,6 @@
                 <textarea id="inputComentario" name="comentario" placeholder="Escribe tu comentario..."></textarea>
                 <button type="submit">Enviar Opinión</button>
             </form>
-
         </div>
     </div>
 </body>

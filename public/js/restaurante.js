@@ -25,6 +25,17 @@ function mostrarinforestaurante() {
             document.getElementById('webRestaurante').textContent = restaurante.web;
             document.getElementById('webRestaurante').href = restaurante.web;
 
+
+            const mostrarredsocial = document.getElementById('mostrarredsocial');
+            mostrarredsocial.textContent = '';
+            data.redsocial.forEach(red => {
+                let contenidored = ''
+                // contenidored += '<p>'
+                contenidored += '<a style="margin: 4px" href="' + red.url + '"><img style="border-radius:10px; width="1000"; height="40"" src="/img/redes/' + red.platforma + '.png" alt="' + red.platforma + '" style="width:42px;height:42px;">'
+                // contenidored += '</p>'
+                mostrarredsocial.innerHTML += contenidored;
+            })
+
             // Opiniones
             const opinionesContainer = document.getElementById('opiniones');
             opinionesContainer.innerHTML = '';

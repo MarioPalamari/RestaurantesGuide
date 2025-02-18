@@ -6,6 +6,7 @@ use App\Models\Etiqueta;
 use Illuminate\Http\Request;
 use App\Models\Restaurante;
 use App\Models\Valoracion;
+use App\Models\restaurante_red_social;
 use Illuminate\Support\Facades\DB;
 
 class RestauranteController extends Controller
@@ -92,7 +93,15 @@ class RestauranteController extends Controller
             ->orderBy('valoraciones.id', 'asc')
             ->get();
 
-        return response()->json(['restaurante' => $restaurante, 'valoraciones' => $valoraciones, 'id' => $id]);
+        $redsocial = restaurante_red_social::join('redes_sociales as re', 're.id', '=', 'restaurante_red_social.id_red_social')
+            ->join('restaurantes as r', 'r.id', '=', 'restaurante_red_social.id_restaurante')
+            ->select('url', 'platforma')
+            ->where('id_restaurante', $id_restaurante)
+            ->get();
+
+        // print_r($redsocial);
+
+        return response()->json(['restaurante' => $restaurante, 'valoraciones' => $valoraciones, 'id' => $id, 'redsocial' => $redsocial]);
     }
 
     public function opinarform(Request $request)
