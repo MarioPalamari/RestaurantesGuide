@@ -22,7 +22,7 @@ function mostrarrestaurantes() {
                 restauranteHTML += '    <div class="img-container">';
                 restauranteHTML += '        <img src="/img/' + restaurante.img + '" alt="' + restaurante.nombre + '" class="img-restaurante">';
                 restauranteHTML += '        <div class="nombre-restaurante">';
-                restauranteHTML += '            <h3>' + restaurante.nombre + '</h3 > ';
+                restauranteHTML += '            <h3 class="text-uppercase">' + restaurante.nombre + '</h3 > ';
                 restauranteHTML += '        </div>';
                 restauranteHTML += '</div>';
                 restauranteHTML += '    <form action="/restaurantes/' + restaurante.nombre.replace(/\s+/g, '-') + ' " method="post" class="form-restaurante">';
@@ -30,6 +30,7 @@ function mostrarrestaurantes() {
                 restauranteHTML += '        <input type="hidden" name="id_restaurante" value="' + restaurante.id + '">';
                 restauranteHTML += '        <button type="submit" class="btn-restaurante">';
                 restauranteHTML += '            <div class="detalle-restaurante">';
+                restauranteHTML += '                <h3>' + restaurante.nombre + '</h3>';
                 restauranteHTML += '                <p>' + restaurante.descripcion + '</p>';
                 restauranteHTML += '                <p>Valoración: ' + (restaurante.media_valoracion == 0 ? '-- ✰' : restaurante.media_valoracion + ' ★') + '</p>';
                 restauranteHTML += '                <p>Precio medio: ' + restaurante.precio_medio + '€</p>';

@@ -66,10 +66,10 @@ function mostrarinforestaurante() {
                 const opinionElement = document.createElement('div');
                 opinionElement.classList.add('opinion');
                 opinionElement.innerHTML = `
-                <h3>${val.nombre} - <span class="stars">${'⭐'.repeat(val.valoracion)}</span></h3>
-                <p class="fecha">${new Date(val.created_at).toLocaleDateString()}</p>
-                <p>${val.comentario}</p>
-            `;
+                    <h3>${val.nombre} - <span class="stars">${'⭐'.repeat(val.valoracion)}</span></h3>
+                    <p class="fecha">${new Date(val.created_at).toLocaleDateString()}</p>
+                    <p class="texto-opinion">${val.comentario}</p>
+                `;
                 opinionesContainer.appendChild(opinionElement);
             });
         })
