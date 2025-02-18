@@ -8,6 +8,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Restaurante;
 use Illuminate\Support\Facades\DB;
+use App\Models\gerenterestaurante;
+use Illuminate\Support\Facades\Mail;
 
 class RestaurantesAdminController extends Controller
 {
@@ -172,12 +174,33 @@ public function crearRestaurante(Request $request)
                 'web' => $request->web
             ]);
     
-            // Sincronizar etiquetas
             if ($request->has('etiquetas')) {
                 $restaurante->etiquetas()->sync($request->etiquetas);
             } else {
                 $restaurante->etiquetas()->detach();
             }
+            $datos = gerenterestaurante::join('usuarios as u', 'u.id', '=', 'gerente_restaurante.id_usuario')
+                ->select('nombre', 'email')
+                ->where('id_restaurante', $id)
+                ->get();
+            $destino = $datos[0];
+
+            $sujeto = "Cambio datos de restaurante";
+            $correoDestinatario = $destino['email'];
+            Mail::send('correo.vistacorreo', [
+                'gerente' => $destino['nombre'],
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'precio_medio' => $request->precio_medio,
+                'img' => $imagenPath,
+                'lugar' => $request->lugar,
+                'horario' => $request->horario,
+                'contacto' => $request->contacto,
+                'web' => $request->web,
+            ], function ($message) use ($correoDestinatario, $sujeto) {
+                $message->to($correoDestinatario)
+                    ->subject($sujeto);
+            });
     
             DB::commit();
     
