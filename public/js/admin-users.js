@@ -230,7 +230,7 @@ function mostrarusers() {
                     <td>${usuario.email}</td>
                     <td>${usuario.rol.nombre}</td>
                     <td>
-                        <button class="btn btn-warning btn-edit" 
+                        <button class="btn btn-warning btn-edit fw-bold rounded-0 text-uppercase" 
                             data-bs-toggle="modal" 
                             data-bs-target="#editUserModal" 
                             data-id="${usuario.id}"
@@ -239,7 +239,7 @@ function mostrarusers() {
                             data-rol_id="${usuario.rol_id}">
                             Editar
                         </button>
-                        <button class="btn btn-danger btn-delete" data-id="${usuario.id}">Eliminar</button>
+                        <button class="btn bg-black text-white btn-delete fw-bold rounded-0 text-uppercase" data-id="${usuario.id}">Eliminar</button>
                     </td>
                 </tr>`;
             resultado.innerHTML += mostrarusuariosHTML;
