@@ -6,10 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    {{-- FUENTE --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -23,6 +19,7 @@
     <p><b>Horario</b>: <span style="background-color: #e4a60e">{{ $horario }}</span></p>
     <p><b>Contacto</b>: <span style="background-color: #e4a60e">{{ $contacto }}</span></p>
     <p><b>Web</b>: <span style="background-color: #e4a60e">{{ $web }}</span></p>
+    <p>Imagen:</p>
 </body>
 
 </html>

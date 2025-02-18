@@ -183,30 +183,34 @@ public function crearRestaurante(Request $request)
 
             // Verificar si existe un gerente antes de intentar enviar el correo
             $datos = gerenterestaurante::join('usuarios as u', 'u.id', '=', 'gerente_restaurante.id_usuario')
-                ->select('nombre', 'email')
+                ->join('restaurantes as re', 're.id', '=', 'gerente_restaurante.id_restaurante')
+                ->select('img', 'u.nombre as nombre', 'email')
                 ->where('id_restaurante', $id)
                 ->get();
+            $destino = $datos[0];
 
-            if ($datos->isNotEmpty()) {
-                $destino = $datos[0];
-                $sujeto = "Cambio datos de restaurante";
-                $correoDestinatario = $destino['email'];
-                Mail::send('correo.vistacorreo', [
-                    'gerente' => $destino['nombre'],
-                    'nombre' => $request->nombre,
-                    'descripcion' => $request->descripcion,
-                    'precio_medio' => $request->precio_medio,
-                    'img' => $imagenPath,
-                    'lugar' => $request->lugar,
-                    'horario' => $request->horario,
-                    'contacto' => $request->contacto,
-                    'web' => $request->web,
-                ], function ($message) use ($correoDestinatario, $sujeto) {
-                    $message->to($correoDestinatario)
-                        ->subject($sujeto);
-                });
-            }
-            db::commit();
+            $sujeto = "Cambio datos de restaurante";
+            $correoDestinatario = $destino['email'];
+            Mail::send('correo.vistacorreo', [
+                'gerente' => $destino['nombre'],
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'precio_medio' => $request->precio_medio,
+                'img' => $destino['img'],
+                'lugar' => $request->lugar,
+                'horario' => $request->horario,
+                'contacto' => $request->contacto,
+                'web' => $request->web,
+            ], function ($message) use ($correoDestinatario, $sujeto, $destino) {
+                $message->to($correoDestinatario)
+                    ->subject($sujeto);
+
+                // Adjuntar la imagen
+                $rutaImagen = public_path('img/' . $destino['img']);
+                if (file_exists($rutaImagen)) {
+                    $message->attach($rutaImagen);
+                }
+            });
             return response()->json([
                 'mensaje' => 'Restaurante actualizado correctamente',
                 'restaurante' => $restaurante
