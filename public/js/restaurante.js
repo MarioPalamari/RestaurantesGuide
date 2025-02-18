@@ -87,7 +87,6 @@ function opinarform() {
         method: "POST",
         body: formData
     }).then(response => {
-        if (!response.ok) throw new Error("Error al cargar los datos");
         return response.text();
     })
         .then(data => {
