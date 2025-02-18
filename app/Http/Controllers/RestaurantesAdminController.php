@@ -175,13 +175,6 @@ class RestaurantesAdminController extends Controller
             } else {
                 $restaurante->etiquetas()->detach();
             }
-
-
-            return response()->json([
-                'mensaje' => 'Restaurante actualizado correctamente',
-                'restaurante' => $restaurante
-            ]);
-
             $datos = gerenterestaurante::join('usuarios as u', 'u.id', '=', 'gerente_restaurante.id_usuario')
                 ->select('nombre', 'email')
                 ->where('id_restaurante', $id)
@@ -206,6 +199,11 @@ class RestaurantesAdminController extends Controller
                 $message->to($correoDestinatario)
                     ->subject($sujeto);
             });
+
+            return response()->json([
+                'mensaje' => 'Restaurante actualizado correctamente',
+                'restaurante' => $restaurante
+            ]);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar restaurante:', ['error' => $e->getMessage()]);
             return response()->json([

@@ -13,17 +13,16 @@
 </head>
 
 <body>
-    <h1>Saborea Madrid</h1>
-    <p>Hola {{ $gerente }} le informamos que hemos modificado los siguientes datos:</p>
-    <p>Nombre: {{ $nombre }}</p>
-    <p>Descripcion: {{ $descripcion }}</p>
-    <p>Precio medio: {{ $precio_medio }}</p>
-    <p>lugar: {{ $lugar }}</p>
-    <p>Horario: {{ $horario }}</p>
-    <p>Contacto: {{ $contacto }}</p>
-    <p>Web: {{ $web }}</p>
-    <p>img</p>
-    <img src="{{ asset('img/parrilla.jpg') }}" alt="">
+    <h1 style="color: #e4a60e">Saborea Madrid</h1>
+    <p>Hola <b><span style="background-color: #e4a60e">{{ ucfirst($gerente) }}</span></b>
+        le informamos que hemos modificado los siguientes datos:</p>
+    <p><b>Nombre</b>: <span style="background-color: #e4a60e">{{ $nombre }}</span></p>
+    <p><b>Descripcion</b>: <span style="background-color: #e4a60e">{{ $descripcion }}</span></p>
+    <p><b>Precio medio</b>: <span style="background-color: #e4a60e">{{ $precio_medio }}€</span></p>
+    <p><b>lugar</b>: <span style="background-color: #e4a60e">{{ $lugar }}</span></p>
+    <p><b>Horario</b>: <span style="background-color: #e4a60e">{{ $horario }}</span></p>
+    <p><b>Contacto</b>: <span style="background-color: #e4a60e">{{ $contacto }}</span></p>
+    <p><b>Web</b>: <span style="background-color: #e4a60e">{{ $web }}</span></p>
 </body>
 
 </html>
