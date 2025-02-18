@@ -11,7 +11,7 @@ Este proyecto consiste en la creación de una guía de restaurantes de saborea M
 
 ## Ubicación de la Base de Datos
 - La base de datos se configura mediante **Laravel Migrations**.
-- Archivo de configuración: `.env` (definir las credenciales de la base de datos aquí).
+- Archivo de configuración: `.env` y `database.php` (definir las credenciales de la base de datos aquí).
 - Para ejecutar las migraciones: `php artisan migrate --seed` (con datos de prueba incluidos).
 
 ## Instalación y Ejecución
@@ -40,7 +40,13 @@ Este proyecto consiste en la creación de una guía de restaurantes de saborea M
    ```bash
    php artisan serve
    ```
-
+## Instalación y Ejecución
+     - Admin:
+         Usuario: admin@example.com
+         Contraseña: qweQWE123
+     - Usuario estandar:
+         Usuario: usuario1@example.com
+         Contraseña: qweQWE123
 ## Miembros del Grupo
 - **Roberto Noble**
 - **Mario Palamari**
