@@ -175,19 +175,24 @@ class AdminController extends Controller
     {
         DB::beginTransaction();
         try {
+            $user->valoraciones()->delete();     
+            $user->gerenteRestaurante()->delete();
             $user->delete();
+    
             DB::commit();
-
+    
             return response()->json([
                 'success' => true,
-                'message' => 'Usuario eliminado exitosamente'
+                'message' => 'Usuario y sus relaciones eliminados exitosamente'
             ]);
+    
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Hubo un error al eliminar el usuario: ' . $e->getMessage()
+                'message' => 'Hubo un error al eliminar el usuario y sus relaciones: ' . $e->getMessage()
             ], 500);
         }
     }
+    
 }
