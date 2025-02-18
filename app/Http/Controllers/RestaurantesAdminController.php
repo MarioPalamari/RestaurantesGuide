@@ -182,9 +182,7 @@ class RestaurantesAdminController extends Controller
             $destino = $datos[0];
 
             $sujeto = "Cambio datos de restaurante";
-            // $correoDestinatario = $destino['email'];
-            $correoDestinatario = "juliocesarcarrillorocha@gmail.com";
-
+            $correoDestinatario = $destino['email'];
             Mail::send('correo.vistacorreo', [
                 'gerente' => $destino['nombre'],
                 'nombre' => $request->nombre,
