@@ -35,4 +35,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Valoracion::class, 'id_usuarios');
     }
+
+    public function gerenteRestaurante()
+    {
+        return $this->hasOne(GerenteRestaurante::class, 'id_usuario');
+    }
 }

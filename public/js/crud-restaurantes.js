@@ -128,116 +128,138 @@ function cargarRestauranteParaEditar(id) {
 
 // Eliminar restaurante
 function eliminarRestaurante(id, csrfToken) {
-    if (confirm("¿Estás seguro de eliminar este restaurante?")) {
-        fetch(`/restaurantes-admin/eliminar/${id}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `_method=DELETE&_token=${csrfToken}`,
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.mensaje);
-            cargarRestaurantes(); // Recargar la lista de restaurantes después de la eliminación
-        });
-    }
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/restaurantes-admin/eliminar/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.mensaje) {
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'El restaurante ha sido eliminado.',
+                        'success'
+                    );
+                    cargarRestaurantes();
+                } else {
+                    Swal.fire(
+                        'Error',
+                        'Hubo un problema al eliminar el restaurante.',
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                Swal.fire(
+                    'Error',
+                    'Hubo un problema al eliminar el restaurante: ' + error.message,
+                    'error'
+                );
+            });
+        }
+    });
 }
 
-// Manejar la creación de restaurante
-document.getElementById("formCrearRestaurante").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    let formData = new FormData();
-    formData.append("nombre", document.getElementById("nombre").value);
-    formData.append("descripcion", document.getElementById("descripcion").value);
-    formData.append("precio_medio", document.getElementById("precio_medio").value);
-    formData.append("lugar", document.getElementById("lugar").value);
-    formData.append("horario", document.getElementById("horario").value);
-    formData.append("contacto", document.getElementById("contacto").value);
-    formData.append("web", document.getElementById("web").value);
-    
-    // Agregar etiquetas seleccionadas
-    const checkboxes = document.querySelectorAll('input[name="etiquetas[]"]:checked');
-    checkboxes.forEach(checkbox => {
-        formData.append("etiquetas[]", checkbox.value);
-    });
-
-    const img = document.getElementById("img").files[0];
-    if (img) formData.append("img", img);
-
-    fetch("/restaurantes-admin/crear", {
-        method: "POST",
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.mensaje);
-        cargarRestaurantes();
-        document.getElementById("formCrearRestaurante").reset();
+// Verificar si el formulario existe antes de agregar el event listener
+const createForm = document.getElementById('formCrearRestaurante');
+if (createForm) {
+    createForm.addEventListener('submit', function(event) {
+        event.preventDefault();
         
-        // Cerrar el modal de creación
-        const modalCrear = bootstrap.Modal.getInstance(document.getElementById('modal-crear'));
-        modalCrear.hide();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Hubo un error al crear el restaurante');
+        let formData = new FormData(this);
+
+        fetch("/restaurantes-admin/crear", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                "Accept": "application/json"
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.mensaje) {
+                Swal.fire(
+                    '¡Creado!',
+                    'El restaurante ha sido creado exitosamente.',
+                    'success'
+                );
+                cargarRestaurantes();
+                document.querySelector("#modal-crear .btn-close").click();
+                this.reset();
+            }
+        })
+        .catch(error => {
+            Swal.fire(
+                'Error',
+                'Hubo un problema al crear el restaurante: ' + error.message,
+                'error'
+            );
+        });
     });
-});
+}
 
-// Manejar la actualización de restaurante
-document.getElementById("formEditarRestaurante").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    let formData = new FormData();
-    formData.append("id", document.getElementById("editRestauranteId").value);
-    formData.append("nombre", document.getElementById("editNombre").value);
-    formData.append("descripcion", document.getElementById("editDescripcion").value);
-    formData.append("precio_medio", document.getElementById("editPrecioMedio").value);
-    formData.append("lugar", document.getElementById("editLugar").value);
-    formData.append("horario", document.getElementById("editHorario").value);
-    formData.append("contacto", document.getElementById("editContacto").value);
-    formData.append("web", document.getElementById("editWeb").value);
-    
-    // Agregar etiquetas seleccionadas
-    const checkboxes = document.querySelectorAll('input[name="etiquetas[]"]:checked');
-    checkboxes.forEach(checkbox => {
-        formData.append("etiquetas[]", checkbox.value);
-    });
-
-    const img = document.getElementById("editImg").files[0];
-    if (img) formData.append("img", img);
-
-    fetch("/restaurantes-admin/actualizar/" + document.getElementById("editRestauranteId").value, {
-        method: "POST",
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.text().then(text => { throw new Error(text) });
-        }
-        return response.json();
-    })
-    .then(data => {
-        alert(data.mensaje);
-        cargarRestaurantes();
+// Verificar si el formulario de edición existe antes de agregar el event listener
+const editForm = document.getElementById('formEditarRestaurante');
+if (editForm) {
+    editForm.addEventListener('submit', function(event) {
+        event.preventDefault();
         
-        // Cerrar el modal de edición
-        const modalEditar = bootstrap.Modal.getInstance(document.getElementById('modal-editar'));
-        modalEditar.hide();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Hubo un error al actualizar el restaurante: ' + error.message);
+        let restauranteId = document.getElementById('editRestauranteId').value;
+        let formData = new FormData(this);
+
+        fetch(`/restaurantes-admin/actualizar/${restauranteId}`, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                "Accept": "application/json"
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.mensaje) {
+                Swal.fire(
+                    '¡Actualizado!',
+                    'El restaurante ha sido actualizado exitosamente.',
+                    'success'
+                );
+                cargarRestaurantes();
+                document.querySelector("#modal-editar .btn-close").click();
+            }
+        })
+        .catch(error => {
+            Swal.fire(
+                'Error',
+                'Hubo un problema al actualizar el restaurante: ' + error.message,
+                'error'
+            );
+        });
     });
-});
+}
 
 function mostrarRestaurantes(restaurantes) {
     const tbody = document.getElementById('listaRestaurantes');
@@ -331,9 +353,31 @@ function limpiarFiltros() {
     aplicarFiltros();
 }
 
-// Event listeners para los botones de filtro
-document.getElementById('aplicarFiltros').addEventListener('click', aplicarFiltros);
-document.getElementById('limpiarFiltros').addEventListener('click', limpiarFiltros);
+// Verificar si el elemento existe antes de agregar el event listener
+const aplicarFiltrosBtn = document.getElementById('aplicarFiltros');
+if (aplicarFiltrosBtn) {
+    aplicarFiltrosBtn.addEventListener('click', aplicarFiltros);
+}
+
+// Verificar si el elemento existe antes de agregar el event listener
+const limpiarFiltrosBtn = document.getElementById('limpiarFiltros');
+if (limpiarFiltrosBtn) {
+    limpiarFiltrosBtn.addEventListener('click', limpiarFiltros);
+}
+
+// Verificar si el elemento existe antes de agregar el event listener
+const mySelectLabel = document.getElementById('mySelectLabel');
+if (mySelectLabel) {
+    mySelectLabel.addEventListener('click', toggleCheckboxArea);
+}
+
+// Verificar si el elemento existe antes de agregar el event listener
+const checkboxes = document.querySelectorAll('#mySelectOptions input[type="checkbox"]');
+if (checkboxes.length > 0) {
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', checkboxStatusChange);
+    });
+}
 
 // Event listeners para los botones de ordenación
 document.addEventListener("click", function(event) {
@@ -344,48 +388,76 @@ document.addEventListener("click", function(event) {
         // Obtener los valores actuales de los filtros
         const nombre = document.getElementById('filtroNombre').value;
         const lugar = document.getElementById('filtroLugar').value;
-        const etiquetas = Array.from(document.getElementById('filtroEtiquetas').selectedOptions)
-            .map(option => option.value);
+        const etiquetas = Array.from(document.querySelectorAll('#mySelectOptions input[type="checkbox"]:checked'))
+            .map(checkbox => checkbox.value);
 
-        fetch(`/restaurantes-admin/listar?nombre=${nombre}&lugar=${lugar}&etiquetas=${etiquetas.join(',')}&sort_column=${column}&sort_order=${order}`, {
+        // Construir la URL con los parámetros
+        let url = `/restaurantes-admin/listar?nombre=${nombre}&lugar=${lugar}`;
+        
+        if (etiquetas.length > 0) {
+            url += `&etiquetas=${etiquetas.join(',')}`;
+        }
+        
+        url += `&sort_column=${column}&sort_order=${order}`;
+
+        fetch(url, {
             method: "GET",
             headers: {
                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error("Error en la respuesta del servidor");
+            return response.json();
+        })
         .then(data => {
             mostrarRestaurantes(data.restaurantes);
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => {
+            console.error("Error:", error);
+            Swal.fire(
+                'Error',
+                'Hubo un problema al ordenar los restaurantes',
+                'error'
+            );
+        });
     }
 });
+
+// Función para mostrar/ocultar el área de checkboxes
 function toggleCheckboxArea(onlyHide = false) {
     var checkboxes = document.getElementById("mySelectOptions");
+    if (!checkboxes) return; // Verificar si el elemento existe
+
     var displayValue = checkboxes.style.display;
-  
-    if (displayValue != "block") {
-      if (onlyHide == false) {
+
+    if (displayValue != "block" && !onlyHide) {
         checkboxes.style.display = "block";
-      }
     } else {
-      checkboxes.style.display = "none";
+        checkboxes.style.display = "none";
     }
-  }
+}
+
+// Función para actualizar el texto del selector cuando cambian los checkboxes
 function checkboxStatusChange() {
     var multiselect = document.getElementById("mySelectLabel");
+    if (!multiselect) return; // Verificar si el elemento existe
+
     var multiselectOption = multiselect.getElementsByTagName('option')[0];
+    if (!multiselectOption) return; // Verificar si el elemento existe
 
     var values = [];
     var checkboxes = document.getElementById("mySelectOptions");
+    if (!checkboxes) return; // Verificar si el elemento existe
+
     var checkedCheckboxes = checkboxes.querySelectorAll('input[type=checkbox]:checked');
 
-    for (const item of checkedCheckboxes) {
+    checkedCheckboxes.forEach(item => {
         const label = item.closest('label');
         if (label) {
             values.push(label.textContent.trim());
         }
-    }
+    });
 
     var dropdownValue = "Seleccionar etiquetas";
     if (values.length > 0) {
@@ -394,3 +466,32 @@ function checkboxStatusChange() {
 
     multiselectOption.innerText = dropdownValue;
 }
+
+// Event listeners para el selector de etiquetas
+document.addEventListener("DOMContentLoaded", function() {
+    const selectLabel = document.getElementById("mySelectLabel");
+    if (selectLabel) {
+        selectLabel.addEventListener("click", function() {
+            toggleCheckboxArea();
+        });
+    }
+
+    const checkboxes = document.querySelectorAll('#mySelectOptions input[type="checkbox"]');
+    if (checkboxes.length > 0) {
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", checkboxStatusChange);
+        });
+    }
+
+    // Cerrar el área de checkboxes al hacer clic fuera
+    document.addEventListener("click", function(event) {
+        const selectBox = document.querySelector(".selectBox");
+        const mySelectOptions = document.getElementById("mySelectOptions");
+
+        if (selectBox && mySelectOptions) {
+            if (!selectBox.contains(event.target) && !mySelectOptions.contains(event.target)) {
+                toggleCheckboxArea(true);
+            }
+        }
+    });
+});

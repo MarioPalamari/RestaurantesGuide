@@ -13,4 +13,8 @@ class gerenterestaurante extends Model
         'id_restaurante'
     ];
     
+    public function restaurante()
+    {
+        return $this->belongsTo(Restaurante::class, 'id_restaurante');
+    }
 }

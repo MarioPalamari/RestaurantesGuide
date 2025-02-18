@@ -8,10 +8,12 @@ document.addEventListener("DOMContentLoaded", function() {
         let nombre = button.getAttribute("data-nombre");
         let email = button.getAttribute("data-email");
         let rol_id = button.getAttribute("data-rol_id");
+        let restaurante_id = button.getAttribute("data-restaurante_id");
 
         document.getElementById("editNombre").value = nombre;
         document.getElementById("editEmail").value = email;
         document.getElementById("editRol").value = rol_id;
+        document.getElementById("editRestaurante").value = restaurante_id || '';
 
         // Cargar los roles en el select
         fetch("/datosusuarios")
@@ -222,30 +224,13 @@ function mostrarusers() {
         return response.json();
     })
     .then(data => {
-        resultado.innerHTML = ""; // Limpiar contenido anterior
-        data.usuarios.forEach(usuario => {
-            let mostrarusuariosHTML = `
-                <tr>
-                    <td>${usuario.nombre}</td>
-                    <td>${usuario.email}</td>
-                    <td>${usuario.rol.nombre}</td>
-                    <td>
-                        <button class="btn btn-warning btn-edit fw-bold rounded-0 text-uppercase" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#editUserModal" 
-                            data-id="${usuario.id}"
-                            data-nombre="${usuario.nombre}" 
-                            data-email="${usuario.email}"
-                            data-rol_id="${usuario.rol_id}">
-                            Editar
-                        </button>
-                        <button class="btn bg-black text-white btn-delete fw-bold rounded-0 text-uppercase" data-id="${usuario.id}">Eliminar</button>
-                    </td>
-                </tr>`;
-            resultado.innerHTML += mostrarusuariosHTML;
-        });
+        console.log("Datos recibidos:", data);
+        mostrarUsuarios(data.usuarios);
     })
-    .catch(error => console.error("Hubo un error:", error));
+    .catch(error => {
+        console.error("Hubo un error:", error);
+        manejarError("Error al cargar los usuarios");
+    });
 }
 
 document.getElementById('createUserModal').addEventListener('show.bs.modal', function() {
@@ -284,15 +269,21 @@ function aplicarFiltros() {
 }
 
 function mostrarUsuarios(usuarios) {
+    console.log("Usuarios a mostrar:", usuarios);
     let resultado = document.getElementById("resultadousuarios");
     resultado.innerHTML = ""; // Limpiar contenido anterior
 
     usuarios.forEach(usuario => {
+        let restaurante = usuario.gerente_restaurante && usuario.gerente_restaurante.restaurante 
+            ? usuario.gerente_restaurante.restaurante.nombre 
+            : 'N/A';
+
         let mostrarusuariosHTML = `
             <tr>
                 <td>${usuario.nombre}</td>
                 <td>${usuario.email}</td>
                 <td>${usuario.rol.nombre}</td>
+                <td>${restaurante}</td>
                 <td class="d-flex justify-content-center gap-1">
                     <button class="btn btn-warning btn-edit fw-bold rounded-0 text-uppercase" 
                         data-bs-toggle="modal" 
@@ -300,7 +291,8 @@ function mostrarUsuarios(usuarios) {
                         data-id="${usuario.id}"
                         data-nombre="${usuario.nombre}" 
                         data-email="${usuario.email}"
-                        data-rol_id="${usuario.rol_id}">
+                        data-rol_id="${usuario.rol_id}"
+                        data-restaurante_id="${usuario.gerente_restaurante ? usuario.gerente_restaurante.id_restaurante : ''}">
                         Editar
                     </button>
                     <button class="btn bg-black text-white btn-delete fw-bold rounded-0 text-uppercase" data-id="${usuario.id}">Eliminar</button>

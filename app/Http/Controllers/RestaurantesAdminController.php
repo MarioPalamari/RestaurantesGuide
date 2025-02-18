@@ -168,35 +168,38 @@ class RestaurantesAdminController extends Controller
                 'web' => $request->web
             ]);
 
-
             // Sincronizar etiquetas
             if ($request->has('etiquetas')) {
                 $restaurante->etiquetas()->sync($request->etiquetas);
             } else {
                 $restaurante->etiquetas()->detach();
             }
+
+            // Verificar si existe un gerente antes de intentar enviar el correo
             $datos = gerenterestaurante::join('usuarios as u', 'u.id', '=', 'gerente_restaurante.id_usuario')
                 ->select('nombre', 'email')
                 ->where('id_restaurante', $id)
                 ->get();
-            $destino = $datos[0];
 
-            $sujeto = "Cambio datos de restaurante";
-            $correoDestinatario = $destino['email'];
-            Mail::send('correo.vistacorreo', [
-                'gerente' => $destino['nombre'],
-                'nombre' => $request->nombre,
-                'descripcion' => $request->descripcion,
-                'precio_medio' => $request->precio_medio,
-                'img' => $imagenPath,
-                'lugar' => $request->lugar,
-                'horario' => $request->horario,
-                'contacto' => $request->contacto,
-                'web' => $request->web,
-            ], function ($message) use ($correoDestinatario, $sujeto) {
-                $message->to($correoDestinatario)
-                    ->subject($sujeto);
-            });
+            if ($datos->isNotEmpty()) {
+                $destino = $datos[0];
+                $sujeto = "Cambio datos de restaurante";
+                $correoDestinatario = $destino['email'];
+                Mail::send('correo.vistacorreo', [
+                    'gerente' => $destino['nombre'],
+                    'nombre' => $request->nombre,
+                    'descripcion' => $request->descripcion,
+                    'precio_medio' => $request->precio_medio,
+                    'img' => $imagenPath,
+                    'lugar' => $request->lugar,
+                    'horario' => $request->horario,
+                    'contacto' => $request->contacto,
+                    'web' => $request->web,
+                ], function ($message) use ($correoDestinatario, $sujeto) {
+                    $message->to($correoDestinatario)
+                        ->subject($sujeto);
+                });
+            }
 
             return response()->json([
                 'mensaje' => 'Restaurante actualizado correctamente',
