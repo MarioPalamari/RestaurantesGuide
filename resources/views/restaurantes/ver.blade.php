@@ -14,11 +14,10 @@
 
     <header class="header">
         <nav class="nav">
-            <div class="logo"><img src="{{ asset('img/logo.png') }}" alt="Logo"></div>
+            <div class="logo"><img src="{{ asset('img/logo.png') }}" alt="a"></div>
             <div class="nav-links">
                 <p>{{ session('nombre') }}</p>
-                <a href="{{ route('logout') }}"><img src="{{ asset('img/logout.png') }}" alt="Logo"  class="d-inline-block align-top pr-5">
-                </a>
+                <a href="{{ route('logout') }}"><img src="{{ asset('img/logout.png') }}" alt="Logo"></a>
             </div>
         </nav>
         <div class="header-content">

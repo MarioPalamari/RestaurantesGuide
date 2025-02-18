@@ -19,12 +19,15 @@ class AuthController extends Controller{
             'password' => 'required',
         ]);
 
-        // Intentar autenticar al usuario
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
             
             // Regenerar la sesión
             $request->session()->regenerate();
+
+            // Guardar el ID y nombre del usuario en la sesión
+            session(['id' => $user->id]);
+            session(['nombre' => $user->nombre]);
 
             // Redirigir según el rol
             if ($user->rol_id == 1) {
@@ -34,7 +37,6 @@ class AuthController extends Controller{
             }
         }
 
-        // Si las credenciales no coinciden, devolver el error
         return back()->withErrors([
             'email' => 'Las credenciales no coinciden con nuestros registros.',
         ]);
