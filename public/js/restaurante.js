@@ -103,17 +103,8 @@ function opinarform() {
     var formData = new FormData(form);
     fetch("/opinar", {
         method: "POST",
-        body: formData,
-        headers: {
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-        }
-    })
-    .then(response => {
-        if (response.status === 401) {
-            window.location.href = '/login';
-            return;
-        }
-        if (!response.ok) throw new Error("Error al enviar la opinión");
+        body: formData
+    }).then(response => {
         return response.text();
     })
     .then(data => {

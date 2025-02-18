@@ -18,7 +18,8 @@ class AuthController extends Controller{
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
+    
+        // Intentar autenticar al usuario
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
             
@@ -36,7 +37,8 @@ class AuthController extends Controller{
                 return redirect()->intended('/restaurantes');
             }
         }
-
+    
+        // Si las credenciales no coinciden, devolver el error
         return back()->withErrors([
             'email' => 'Las credenciales no coinciden con nuestros registros.',
         ]);

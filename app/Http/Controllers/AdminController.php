@@ -7,10 +7,12 @@ use App\Models\User;
 use App\Models\Rol;
 use App\Models\GerenteRestaurante;
 use App\Models\Restaurante;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
-    public function showAdminDashboard(){
+    public function showAdminDashboard()
+    {
         return view('admin.admin');
     }
 
@@ -52,13 +54,12 @@ class AdminController extends Controller
 
             $usuarios = $query->get();
             $roles = Rol::all();
-            
+
             return response()->json([
                 'success' => true,
                 'usuarios' => $usuarios,
                 'roles' => $roles
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -69,6 +70,7 @@ class AdminController extends Controller
 
     public function store(Request $request)
     {
+        DB::beginTransaction();
         try {
             $request->validate([
                 'nombre' => 'required|string|max:255',
@@ -92,12 +94,20 @@ class AdminController extends Controller
                 ]);
             }
 
+            DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario creado exitosamente'
             ]);
-
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Hubo un error al crear el usuario: ' . $e->getMessage()
@@ -107,6 +117,7 @@ class AdminController extends Controller
 
     public function update(Request $request, User $user)
     {
+        DB::beginTransaction();
         try {
             $request->validate([
                 'nombre' => 'required|string|max:255',
@@ -139,12 +150,20 @@ class AdminController extends Controller
                 GerenteRestaurante::where('id_usuario', $user->id)->delete();
             }
 
+            DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario actualizado exitosamente'
             ]);
-
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Hubo un error al actualizar el usuario: ' . $e->getMessage()
@@ -154,10 +173,21 @@ class AdminController extends Controller
 
     public function destroy(User $user)
     {
-        $user->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Usuario eliminado exitosamente'
-        ]);
+        DB::beginTransaction();
+        try {
+            $user->delete();
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario eliminado exitosamente'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error al eliminar el usuario: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
