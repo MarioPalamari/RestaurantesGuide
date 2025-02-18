@@ -15,22 +15,32 @@ class AuthController extends Controller{
     public function login(Request $request)
     {
         $request->validate([
-            'nombre' => 'required',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
     
-        // Usar 'nombre' y 'password' correctamente en el intento de autenticación
-        if (Auth::attempt(['nombre' => $request->nombre, 'password' => $request->password])) {
-            // Si las credenciales son correctas, regenerar la sesión
+        // Intentar autenticar al usuario
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $user = Auth::user();
+            
+            // Regenerar la sesión
             $request->session()->regenerate();
-    
-            // Redirigir a la página deseada (dashboard en este caso)
-            return redirect()->intended('/dashboard');
+
+            // Guardar el ID y nombre del usuario en la sesión
+            session(['id' => $user->id]);
+            session(['nombre' => $user->nombre]);
+
+            // Redirigir según el rol
+            if ($user->rol_id == 1) {
+                return redirect()->intended('/admin');
+            } elseif ($user->rol_id == 2) {
+                return redirect()->intended('/restaurantes');
+            }
         }
     
         // Si las credenciales no coinciden, devolver el error
         return back()->withErrors([
-            'nombre' => 'Las credenciales no coinciden con nuestros registros.',
+            'email' => 'Las credenciales no coinciden con nuestros registros.',
         ]);
     }
     
@@ -55,7 +65,7 @@ public function register(Request $request)
     ]);
 
     Auth::login($user);
-    return redirect('/dashboard');
+    return redirect('/restaurantes');
 }
     public function logout(Request $request){
         Auth::logout();

@@ -1,0 +1,39 @@
+/* Estilos para la sección Hero */
+.hero-section {
+    background: url('../img/header.jpg') center/cover;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.separador {
+    width: 10%;
+    height: 2px;
+    margin: 20px auto;
+    background: #ffffff;
+}
+/* Opacidad de la imagen */
+.card-img {
+    opacity: 0.5;
+}
+
+/* Centrado del título en el card */
+.card-img-overlay .card-title {
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Espaciado para el botón */
+.btn-warning {
+    font-weight: bold;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-radius: 50px;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}

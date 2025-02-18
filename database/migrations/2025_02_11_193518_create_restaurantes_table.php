@@ -14,9 +14,13 @@ return new class extends Migration
         Schema::create('restaurantes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('descripcion');
+            $table->text('descripcion');
             $table->decimal('precio_medio', 8, 2);
             $table->string('img')->nullable();
+            $table->string('lugar');
+            $table->string('horario');
+            $table->string('contacto');
+            $table->string('web');
             $table->timestamps();
         });
     }

@@ -18,10 +18,17 @@ class usuarios_Seeder extends Seeder
                 'rol_id' => 1
             ],
             [
+                'nombre' => 'julio',
+                'email' => 'juliocesarcarrillorocha@gmail.com',
+                'password' => Hash::make('qweQWE123'),
+                'rol_id' => 6
+            ],
+            [
                 'nombre' => 'Usuario1',
                 'email' => 'usuario1@example.com',
                 'password' => Hash::make('qweQWE123'),
                 'rol_id' => 2
+
             ],
             [
                 'nombre' => 'Moderador1',
@@ -47,4 +54,4 @@ class usuarios_Seeder extends Seeder
             User::create($usuario);
         }
     }
-} 
+}

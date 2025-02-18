@@ -7,25 +7,27 @@
 </head>
 <body>
     <div class="container d-flex flex-row w-100 justify-content-center align-items-center form-container">
-        <div class="col-6 d-flex justify-content-center">
-        <img src="{{asset('img/logo.png')}}" alt="" style="width: 200px;">
+    <div class="container-todo  d-flex flex-row w-100">
+        <div class="col-6 d-flex justify-content-center align-items-center">
+            <img src="{{asset('img/logo.png')}}" alt="" style="width: 200px;">
         </div>
         <div class="col-6 d-flex">
             <form method="POST" action="{{ route('login') }}" style="width: 80%;">
                 @csrf
                 @method('POST')
                 <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre: </label>
-                    <input type="text" name="nombre" class="form-control">
+                    <h2>LOGIN</h2>
+                    <label for="email" class="form-label">Email: </label>
+                    <input type="text" name="email" class="form-control">
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Contraseña:</label>
                     <input type="password" name="password" class="form-control">
                 </div>
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">Login</button>
+                <div class="mb-3 d-flex flex-column justify-content-between text-center">
+                    <button type="submit" class="text-uppercase btn-form mb-2">Login</button>
+                    <span class="text-uppercase fw-bold">¿Todavía sin cuenta? <a href="{{route('register') }}" class="text-decoration-none">Registrarse</a></span>
                 </div>
-                <a href="{{route('register') }}" class="decoration-none">Registrarse</a>
                 <br>
                 @if ($errors->any())
                     <div class="alert alert-danger">

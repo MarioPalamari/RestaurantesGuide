@@ -1,4 +1,34 @@
+body{
+    background: url('../img/header.jpg') center/cover;
+}
 .form-container{
     height: 100dvh; 
     gap:20px;
+}
+.container-todo{
+    background-color: #F2F2F2;
+    padding: 20px;
+    border-radius: 10px;
+}
+.btn-form {
+    background-color: #FFC107; 
+    border: none;
+    color: black;
+    padding: 10px 20px; 
+    font-weight: bold;
+    font-size: 16px; 
+    margin: 4px 2px; 
+    cursor: pointer; 
+    border-radius: 5px; 
+    width: 100%;
+    transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+  }
+  .btn-form:hover {
+    background-color: #FFA000; /* Nuevo color de fondo al pasar el mouse */
+  }
+  .error{
+    color: red;
+    margin-top: 5px;
+    font-size: 14px;
+    text-align: center;
 }
