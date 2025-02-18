@@ -1,7 +1,7 @@
 # Guía de Restaurantes
 
 ## Información del Proyecto
-Este proyecto consiste en la creación de una guía de restaurantes de nuestra ciudad utilizando el framework Laravel. El objetivo es permitir a los usuarios buscar restaurantes según diferentes criterios y gestionarlos con un sistema de roles.
+Este proyecto consiste en la creación de una guía de restaurantes de saborea Madrid utilizando el framework Laravel. El objetivo es permitir a los usuarios buscar restaurantes según diferentes criterios y gestionarlos con un sistema de roles.
 
 ## Funcionamiento
 - **Usuarios Estándar**: Pueden buscar restaurantes por precio medio, valoración y tipo de cocina. También pueden registrarse, iniciar sesión y dejar valoraciones.
