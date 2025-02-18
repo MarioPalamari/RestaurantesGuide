@@ -18,9 +18,9 @@
 .filtros {
     position: sticky;
     top: 140px;
-    background: linear-gradient(to right, #c4c4c4, white);
+    width: 40%;
+    background: linear-gradient(to right, #c4c4c4, #f3efef);
     padding: 20px;
-    border-radius: 8px;
     overflow-y: auto;
     z-index: 10;
 }
@@ -49,27 +49,35 @@
     border-radius: 4px;
     font-size: 14px;
 }
-
+.filtro-submit{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    
+}
 /* Estilo para el botón de búsqueda */
 .filtro-submit input {
-    width: 100%;
+    width: 70%;
     padding: 10px;
-    /* background-color: #008CBA; */
-    background: linear-gradient(to right, #008CBA, #008bbab4, white);
+    background-color: #FFC107;
     color: black;
     border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
+    font-size: 16px;    
+    font-weight: bold;
     transition: background-color 0.3s ease;
 }
 
 /* Efecto hover sobre el botón de búsqueda */
 .filtro-submit input:hover {
-    background-color: #005f73;
-    color: white;
+    background-color: #FFA000;
 }
-
+.filtro-borrar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
 /* Estilo para el enlace de borrar filtros */
 .filtro-borrar button {
     background: none;
@@ -81,6 +89,7 @@
     display: block;
     margin-top: 10px;
     text-align: center;
+    cursor: pointer;
 }
 
 /* Efecto hover sobre el enlace de borrar filtros */
@@ -99,15 +108,17 @@
 /* Estilo para cada restaurante */
 .restaurante {
     position: relative;
-    width: 320px;
-    border-radius: 8px;
+    width: 300px;
     overflow: hidden;
     box-shadow: #f2f2f2;
     background-color: #fff;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease-in-out;
 }
 
+.restaurante:hover {
+    transform: scale(1);
+}
 /* Estilo para la imagen de cada restaurante */
 .img-container {
     position: relative;
@@ -144,20 +155,28 @@
 
 /* Estilo para los detalles del restaurante */
 .detalle-restaurante {
-    display: none;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 10px;
-    border-radius: 8px;
-    z-index: 5;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    font-size: 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
+/* Mostrar detalles con efecto suave al pasar el mouse */
 .restaurante:hover .detalle-restaurante {
-    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Contenedor del paginador */
@@ -254,6 +273,7 @@
 
 .nav-links {
     display: flex;
+    align-items: center;
     gap: 20px;
 }
 
@@ -309,17 +329,16 @@
         position: sticky;
         /* Se elimina sticky para móviles */
         top: auto;
-        background: #c4c4c4;
         padding: 15px;
         margin: 5%;
-        border-radius: 8px;
     }
 
     .restaurantes {
-        display: flex;
-        flex-direction: column;
-        /* Los restaurantes se apilan en una sola columna */
-        align-items: center;
-        width: 100%;
+        justify-content: center;
+    }
+
+    ul.breadcrumb {
+        list-style: none;
+        margin-left: 7%;
     }
 }

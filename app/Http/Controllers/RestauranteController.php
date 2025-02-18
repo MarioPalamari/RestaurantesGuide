@@ -6,6 +6,7 @@ use App\Models\Etiqueta;
 use Illuminate\Http\Request;
 use App\Models\Restaurante;
 use App\Models\Valoracion;
+use App\Models\restaurante_red_social;
 use Illuminate\Support\Facades\DB;
 
 class RestauranteController extends Controller
@@ -73,6 +74,7 @@ class RestauranteController extends Controller
 
     public function mostrarinforestaurante()
     {
+        $id = session('id');
         $id_restaurante = session('id_restaurante');
 
         $restaurante = Restaurante::select([
@@ -86,25 +88,43 @@ class RestauranteController extends Controller
             ->get();
 
         $valoraciones = Valoracion::join('usuarios as u', 'u.id', '=', 'valoraciones.id_usuarios')
+            ->select('valoraciones.*', 'u.nombre')
             ->where('id_restaurante', $id_restaurante)
             ->orderBy('valoraciones.id', 'asc')
             ->get();
 
-        return response()->json(['restaurante' => $restaurante, 'valoraciones' => $valoraciones]);
-    }
+        $redsocial = restaurante_red_social::join('redes_sociales as re', 're.id', '=', 'restaurante_red_social.id_red_social')
+            ->join('restaurantes as r', 'r.id', '=', 'restaurante_red_social.id_restaurante')
+            ->select('url', 'platforma')
+            ->where('id_restaurante', $id_restaurante)
+            ->get();
 
+        // print_r($redsocial);
+
+        return response()->json(['restaurante' => $restaurante, 'valoraciones' => $valoraciones, 'id' => $id, 'redsocial' => $redsocial]);
+    }
 
     public function opinarform(Request $request)
     {
-        $resultado = new Valoracion();
-        $resultado->valoracion = $request->estrellas;
-        $resultado->comentario = $request->comentario;
-        $resultado->id_usuarios = 2;
-        $resultado->id_restaurante = session('id_restaurante');
-        $resultado->save();
-
+        if (isset($request->id)) {
+            $resultado = Valoracion::find($request->id);
+            $resultado->valoracion = $request->estrellas;
+            $resultado->comentario = $request->comentario;
+            $resultado->id_usuarios = session('id');
+            $resultado->id_restaurante = session('id_restaurante');
+            $resultado->save();
+            echo "ok";
+        } else {
+            $resultado = new Valoracion();
+            $resultado->valoracion = $request->estrellas;
+            $resultado->comentario = $request->comentario;
+            $resultado->id_usuarios = session('id');
+            $resultado->id_restaurante = session('id_restaurante');
+            $resultado->save();
+        }
         echo "ok";
     }
+
     public function restaurantesMejorValorados()
     {
         $restaurantesMejorValorados = Restaurante::select(
@@ -123,6 +143,18 @@ class RestauranteController extends Controller
     
         return view('dashboard', compact('restaurantesMejorValorados'));
     }
-    
-    
+
+    public function datosopinar(Request $request)
+    {
+        $datosvaloracion = Valoracion::find($request->input('id'));
+        return response()->json($datosvaloracion);
+    }
+
+    public function eliminaropinion(Request $request)
+    {
+        $id = $request->input('id');
+        $resultado = Valoracion::find($id);
+        $resultado->delete();
+        echo "ok";
+    }
 }

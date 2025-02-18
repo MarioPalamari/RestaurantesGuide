@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Restaurante;
+use App\Models\gerenterestaurante;
+use Illuminate\Support\Facades\Mail;
 
 
 class RestaurantesAdminController extends Controller
@@ -18,10 +21,40 @@ class RestaurantesAdminController extends Controller
         return view('admin.admin-restaurante', compact('restaurantes', 'etiquetas'));
     }
 
-    public function listarRestaurantes()
+    public function listarRestaurantes(Request $request)
     {
-        $restaurantes = Restaurante::with('etiquetas')->get();
-        return response()->json(['restaurantes' => $restaurantes]);
+        $query = Restaurante::with('etiquetas');
+
+        // Filtro por nombre
+        if ($request->has('nombre') && $request->nombre != '') {
+            $query->where('nombre', 'like', '%' . $request->nombre . '%');
+        }
+
+        // Filtro por lugar
+        if ($request->has('lugar') && $request->lugar != '') {
+            $query->where('lugar', 'like', '%' . $request->lugar . '%');
+        }
+
+        // Filtro por etiquetas
+        if ($request->has('etiquetas') && !empty($request->etiquetas)) {
+            $etiquetasNombres = explode(',', $request->etiquetas);
+            $query->whereHas('etiquetas', function ($q) use ($etiquetasNombres) {
+                $q->whereIn('nombre', $etiquetasNombres);
+            });
+        }
+
+        // Ordenación
+        if ($request->has('sort_column') && $request->has('sort_order')) {
+            $query->orderBy($request->sort_column, $request->sort_order);
+        }
+
+        $restaurantes = $query->get();
+        $etiquetas = \App\Models\Etiqueta::all();
+
+        return response()->json([
+            'restaurantes' => $restaurantes,
+            'etiquetas' => $etiquetas
+        ]);
     }
     public function crearRestaurante(Request $request)
     {
@@ -36,7 +69,7 @@ class RestaurantesAdminController extends Controller
             'web' => 'nullable|url',
             'etiquetas' => 'nullable|array'
         ]);
-    
+
         $imagenPath = null;
         if ($request->hasFile('img')) {
             $imagen = $request->file('img');
@@ -45,7 +78,7 @@ class RestaurantesAdminController extends Controller
             $imagen->move($rutaDestino, $nombreArchivo);
             $imagenPath = $nombreArchivo;
         }
-    
+
         $restaurante = Restaurante::create([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
@@ -56,47 +89,47 @@ class RestaurantesAdminController extends Controller
             'contacto' => $request->contacto,
             'web' => $request->web
         ]);
-    
+
         // Asociar etiquetas
         if ($request->has('etiquetas')) {
             $restaurante->etiquetas()->attach($request->etiquetas);
         }
-    
+
         return response()->json([
             'mensaje' => 'Restaurante creado correctamente',
             'restaurante' => $restaurante
         ]);
     }
-    
+
     public function mostrarRestaurante($id)
     {
         $restaurante = Restaurante::with('etiquetas')->findOrFail($id);
         $etiquetas = \App\Models\Etiqueta::all();
-        
+
         // Obtener los IDs de las etiquetas asociadas al restaurante
         $etiquetasAsociadas = $restaurante->etiquetas->pluck('id')->toArray();
-        
+
         // Crear un nuevo array de etiquetas transformadas
-        $etiquetasTransformadas = $etiquetas->map(function($etiqueta) use ($etiquetasAsociadas) {
+        $etiquetasTransformadas = $etiquetas->map(function ($etiqueta) use ($etiquetasAsociadas) {
             return [
                 'id' => $etiqueta->id,
                 'nombre' => $etiqueta->nombre,
                 'selected' => in_array($etiqueta->id, $etiquetasAsociadas)
             ];
         });
-        
+
         // Reemplazar las etiquetas originales con las transformadas
         $restaurante->etiquetas_transformadas = $etiquetasTransformadas;
-        
+
         \Log::info('Restaurante con etiquetas transformadas:', [
             'restaurante' => $restaurante->makeHidden('etiquetas')->toArray(),
             'etiquetas_transformadas' => $etiquetasTransformadas
         ]);
-        
+
         return response()->json(['restaurante' => $restaurante]);
     }
-    
-    
+
+
 
     public function actualizarRestaurante(Request $request, $id)
     {
@@ -135,12 +168,37 @@ class RestaurantesAdminController extends Controller
                 'web' => $request->web
             ]);
 
+
             // Sincronizar etiquetas
             if ($request->has('etiquetas')) {
                 $restaurante->etiquetas()->sync($request->etiquetas);
             } else {
                 $restaurante->etiquetas()->detach();
             }
+            $datos = gerenterestaurante::join('usuarios as u', 'u.id', '=', 'gerente_restaurante.id_usuario')
+                ->select('nombre', 'email')
+                ->where('id_restaurante', $id)
+                ->get();
+            $destino = $datos[0];
+
+            $sujeto = "Cambio datos de restaurante";
+            // $correoDestinatario = $destino['email'];
+            $correoDestinatario = "juliocesarcarrillorocha@gmail.com";
+
+            Mail::send('correo.vistacorreo', [
+                'gerente' => $destino['nombre'],
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'precio_medio' => $request->precio_medio,
+                'img' => $imagenPath,
+                'lugar' => $request->lugar,
+                'horario' => $request->horario,
+                'contacto' => $request->contacto,
+                'web' => $request->web,
+            ], function ($message) use ($correoDestinatario, $sujeto) {
+                $message->to($correoDestinatario)
+                    ->subject($sujeto);
+            });
 
             return response()->json([
                 'mensaje' => 'Restaurante actualizado correctamente',
@@ -154,13 +212,13 @@ class RestaurantesAdminController extends Controller
             ], 500);
         }
     }
-    
+
 
     public function eliminarRestaurante($id)
     {
         $eliminar = Restaurante::find($id);
         $eliminar->delete();
-        
+
         return response()->json([
             'mensaje' => 'Restaurante eliminado correctamente'
         ]);

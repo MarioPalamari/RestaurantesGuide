@@ -1,5 +1,20 @@
 document.addEventListener('DOMContentLoaded', function() {
     cargarRestaurantes();
+    
+    // Event listeners para aplicar filtros automáticamente
+    document.getElementById('filtroNombre').addEventListener('input', aplicarFiltros);
+    document.getElementById('filtroLugar').addEventListener('input', aplicarFiltros);
+    
+    const checkboxes = document.querySelectorAll('#mySelectOptions input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', aplicarFiltros);
+    });
+
+    // Configurar evento de limpiar filtros
+    document.getElementById('limpiarFiltros').addEventListener('click', function(e) {
+        e.preventDefault();
+        limpiarFiltros();
+    });
 });
 
 // Cargar los restaurantes desde el servidor
@@ -24,9 +39,9 @@ function cargarRestaurantes() {
                     <td>${restaurante.contacto}</td>
                     <td>${restaurante.web}</td>
                     <td>${restaurante.etiquetas.map(etiqueta => etiqueta.nombre).join(', ')}</td>
-                    <td>
-                        <button class="editarBtn" data-id="${restaurante.id}">Editar</button>
-                        <button class="eliminarBtn" data-id="${restaurante.id}">Eliminar</button>
+                    <td class="text-center">
+                        <button class="editarBtn btn btn-warning fw-bold rounded-0 text-uppercase mb-1" data-id="${restaurante.id}">Editar</button>
+                        <button class="eliminarBtn btn bg-black text-white fw-bold rounded-0 text-uppercase btn-delete" data-id="${restaurante.id}">Eliminar</button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -223,3 +238,159 @@ document.getElementById("formEditarRestaurante").addEventListener("submit", func
         alert('Hubo un error al actualizar el restaurante: ' + error.message);
     });
 });
+
+function mostrarRestaurantes(restaurantes) {
+    const tbody = document.getElementById('listaRestaurantes');
+    tbody.innerHTML = '';
+
+    restaurantes.forEach(restaurante => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${restaurante.nombre}</td>
+            <td>${restaurante.descripcion}</td>
+            <td>${restaurante.precio_medio}</td>
+            <td>${restaurante.img ? `<img src="/img/${restaurante.img}" width="50">` : ''}</td>
+            <td>${restaurante.lugar}</td>
+            <td>${restaurante.horario}</td>
+            <td>${restaurante.contacto}</td>
+            <td>${restaurante.web}</td>
+            <td>${restaurante.etiquetas.map(etiqueta => etiqueta.nombre).join(', ')}</td>
+            <td class="text-center">
+                <button class="btn btn-warning fw-bold rounded-0 text-uppercase mb-1 btn-edit editarBtn"  data-id="${restaurante.id}">Editar</button>
+                <button class="btn bg-black text-white fw-bold rounded-0 text-uppercase btn-delete eliminarBtn" data-id="${restaurante.id}">Eliminar</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    
+    // Agregar eventos a los botones de editar y eliminar
+    document.querySelectorAll('.editarBtn').forEach(button => {
+        button.addEventListener('click', () => {
+            cargarRestauranteParaEditar(button.dataset.id);
+        });
+    });
+
+    document.querySelectorAll('.eliminarBtn').forEach(button => {
+        button.addEventListener('click', () => {
+            eliminarRestaurante(button.dataset.id, csrfToken);
+        });
+    });
+}
+
+function aplicarFiltros(sortColumn = null, sortOrder = null) {
+    const nombre = document.getElementById('filtroNombre').value;
+    const lugar = document.getElementById('filtroLugar').value;
+    const etiquetas = Array.from(document.querySelectorAll('#mySelectOptions input[type="checkbox"]:checked'))
+        .map(checkbox => {
+            const label = checkbox.closest('label');
+            return label ? label.textContent.trim() : '';
+        });
+
+    let url = `/restaurantes-admin/listar?nombre=${nombre}&lugar=${lugar}`;
+    
+    if (etiquetas.length > 0) {
+        url += `&etiquetas=${etiquetas.join(',')}`;
+    }
+
+    if (sortColumn && sortOrder) {
+        url += `&sort_column=${sortColumn}&sort_order=${sortOrder}`;
+    }
+
+    fetch(url, {
+        method: "GET",
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        mostrarRestaurantes(data.restaurantes);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert('Hubo un error al aplicar los filtros');
+    });
+}
+
+function limpiarFiltros() {
+    // Limpiar los valores de los filtros
+    document.getElementById('filtroNombre').value = '';
+    document.getElementById('filtroLugar').value = '';
+    
+    // Desmarcar todas las etiquetas
+    const checkboxes = document.querySelectorAll('#mySelectOptions input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // Actualizar el texto del dropdown
+    checkboxStatusChange();
+    
+    // Aplicar los filtros automáticamente
+    aplicarFiltros();
+}
+
+// Event listeners para los botones de filtro
+document.getElementById('aplicarFiltros').addEventListener('click', aplicarFiltros);
+document.getElementById('limpiarFiltros').addEventListener('click', limpiarFiltros);
+
+// Event listeners para los botones de ordenación
+document.addEventListener("click", function(event) {
+    if (event.target.classList.contains("btn-sort")) {
+        const column = event.target.getAttribute("data-column");
+        const order = event.target.getAttribute("data-order");
+        
+        // Obtener los valores actuales de los filtros
+        const nombre = document.getElementById('filtroNombre').value;
+        const lugar = document.getElementById('filtroLugar').value;
+        const etiquetas = Array.from(document.getElementById('filtroEtiquetas').selectedOptions)
+            .map(option => option.value);
+
+        fetch(`/restaurantes-admin/listar?nombre=${nombre}&lugar=${lugar}&etiquetas=${etiquetas.join(',')}&sort_column=${column}&sort_order=${order}`, {
+            method: "GET",
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            mostrarRestaurantes(data.restaurantes);
+        })
+        .catch(error => console.error("Error:", error));
+    }
+});
+function toggleCheckboxArea(onlyHide = false) {
+    var checkboxes = document.getElementById("mySelectOptions");
+    var displayValue = checkboxes.style.display;
+  
+    if (displayValue != "block") {
+      if (onlyHide == false) {
+        checkboxes.style.display = "block";
+      }
+    } else {
+      checkboxes.style.display = "none";
+    }
+  }
+function checkboxStatusChange() {
+    var multiselect = document.getElementById("mySelectLabel");
+    var multiselectOption = multiselect.getElementsByTagName('option')[0];
+
+    var values = [];
+    var checkboxes = document.getElementById("mySelectOptions");
+    var checkedCheckboxes = checkboxes.querySelectorAll('input[type=checkbox]:checked');
+
+    for (const item of checkedCheckboxes) {
+        const label = item.closest('label');
+        if (label) {
+            values.push(label.textContent.trim());
+        }
+    }
+
+    var dropdownValue = "Seleccionar etiquetas";
+    if (values.length > 0) {
+        dropdownValue = values.join(', ');
+    }
+
+    multiselectOption.innerText = dropdownValue;
+}

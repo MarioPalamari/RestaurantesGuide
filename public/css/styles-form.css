@@ -26,3 +26,9 @@ body{
   .btn-form:hover {
     background-color: #FFA000; /* Nuevo color de fondo al pasar el mouse */
   }
+  .error{
+    color: red;
+    margin-top: 5px;
+    font-size: 14px;
+    text-align: center;
+}

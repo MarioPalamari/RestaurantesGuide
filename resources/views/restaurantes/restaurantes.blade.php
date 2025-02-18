@@ -18,8 +18,9 @@
         <nav class="nav">
             <div class="logo"><img src="{{ asset('img/logo.png') }}" alt="a"></div>
             <div class="nav-links">
-                <p>Juan</p>
-                <a href="{{ route('logout') }}">Salir</a>
+                <p>{{ session('nombre') }}</p>
+                <a href="{{ route('logout') }}"><img src="{{ asset('img/logout.png') }}" alt="Logo"  class="d-inline-block align-top pr-5">
+                </a>
             </div>
         </nav>
 
@@ -49,7 +50,7 @@
                     <input type="text" name="valoracion" id="valoracion" placeholder="Ej. 4-5">
                 </div>
                 <div class="filtro-submit">
-                    <input type="submit" value="Buscar">
+                    <input type="submit" value="BUSCAR">
                 </div>
                 <div class="filtro-borrar">
                     <button onclick="borrarfiltros();">✖ Borrar filtros</button>
