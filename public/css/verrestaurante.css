@@ -1,5 +1,5 @@
 /* General */
-body {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -24,8 +24,8 @@ body {
 .nav {
     position: fixed;
     top: 0;
-    /* left: 100; */
-    width: 95%;
+    left: 0;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -34,6 +34,7 @@ body {
     z-index: 1000;
     /* Asegura que la barra de navegación esté sobre otros elementos */
 }
+
 
 
 .logo img {
@@ -45,12 +46,17 @@ body {
 
 .nav-links {
     display: flex;
-    gap: 20px;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-links p {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
 }
 
 .nav-links a {
-    margin-top: 16%;
-    margin-right: 100%;
     color: white;
     text-decoration: none;
     font-size: 18px;
@@ -60,6 +66,11 @@ body {
 .nav-links a:hover {
     color: #f8d210;
 }
+
+.nav-links a img {
+    vertical-align: middle;
+}
+
 
 /* Contenido del header */
 .header-content h1 {
@@ -100,21 +111,27 @@ body {
     border-radius: 10px;
     margin: 10px 0;
 }
-.texto-opinion{
+
+.texto-opinion {
     display: inline-block;
     word-wrap: break-word;
     max-width: 100%;
     width: 100%;
 }
-.form-opinar{
+
+.form-opinar {
     display: flex;
     gap: 10px;
 }
+
 #opiniones {
     display: flex;
-    flex-direction: column; /* Apilar opiniones verticalmente */
-    gap: 15px; /* Espaciado entre opiniones */
+    flex-direction: column;
+    /* Apilar opiniones verticalmente */
+    gap: 15px;
+    /* Espaciado entre opiniones */
 }
+
 .stars {
     color: gold;
 }
