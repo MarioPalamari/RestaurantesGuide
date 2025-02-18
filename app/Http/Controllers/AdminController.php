@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Rol;
+use App\Models\GerenteRestaurante;
+use App\Models\Restaurante;
 
 class AdminController extends Controller
 {
@@ -15,44 +17,54 @@ class AdminController extends Controller
     public function mostrarpagina()
     {
         $roles = Rol::all();
-        return view('admin.users.index', compact('roles'));
+        $restaurantes = Restaurante::all();
+        return view('admin.users.index', compact('roles', 'restaurantes'));
     }
 
     public function index(Request $request)
     {
-        $query = User::with('rol');
+        try {
+            $query = User::with(['rol', 'gerenteRestaurante.restaurante']);
 
-        if ($request->has('nombre') && $request->nombre != '') {
-            $query->where('nombre', 'like', '%' . $request->nombre . '%');
-        }
-
-        if ($request->has('email') && $request->email != '') {
-            $query->where('email', 'like', '%' . $request->email . '%');
-        }
-
-        if ($request->has('rol_id') && $request->rol_id != '') {
-            $query->where('rol_id', $request->rol_id);
-        }
-
-        if ($request->has('sort_column') && $request->has('sort_order')) {
-            $column = $request->sort_column;
-            $order = $request->sort_order;
-
-            if ($column === 'rol') {
-                $query->join('roles', 'usuarios.rol_id', '=', 'roles.id')
-                      ->orderBy('roles.nombre', $order);
-            } else {
-                $query->orderBy($column, $order);
+            if ($request->has('nombre') && $request->nombre != '') {
+                $query->where('nombre', 'like', '%' . $request->nombre . '%');
             }
-        }
 
-        $usuarios = $query->get();
-        $roles = Rol::all();
-    
-        return response()->json([
-            'usuarios' => $usuarios,
-            'roles' => $roles
-        ]);
+            if ($request->has('email') && $request->email != '') {
+                $query->where('email', 'like', '%' . $request->email . '%');
+            }
+
+            if ($request->has('rol_id') && $request->rol_id != '') {
+                $query->where('rol_id', $request->rol_id);
+            }
+
+            if ($request->has('sort_column') && $request->has('sort_order')) {
+                $column = $request->sort_column;
+                $order = $request->sort_order;
+
+                if ($column === 'rol') {
+                    $query->join('roles', 'usuarios.rol_id', '=', 'roles.id')
+                          ->orderBy('roles.nombre', $order);
+                } else {
+                    $query->orderBy($column, $order);
+                }
+            }
+
+            $usuarios = $query->get();
+            $roles = Rol::all();
+            
+            return response()->json([
+                'success' => true,
+                'usuarios' => $usuarios,
+                'roles' => $roles
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los usuarios: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function store(Request $request)
@@ -62,7 +74,8 @@ class AdminController extends Controller
                 'nombre' => 'required|string|max:255',
                 'email' => 'required|email|unique:usuarios,email',
                 'password' => 'required|string|min:6',
-                'rol_id' => 'required|exists:roles,id'
+                'rol_id' => 'required|exists:roles,id',
+                'restaurante_id' => 'nullable|exists:restaurantes,id'
             ]);
 
             $user = User::create([
@@ -72,20 +85,22 @@ class AdminController extends Controller
                 'rol_id' => $request->rol_id
             ]);
 
+            if ($request->restaurante_id) {
+                GerenteRestaurante::create([
+                    'id_usuario' => $user->id,
+                    'id_restaurante' => $request->restaurante_id
+                ]);
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario creado exitosamente'
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'errors' => $e->errors()
-            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Hubo un error al crear el usuario'
+                'message' => 'Hubo un error al crear el usuario: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -97,7 +112,8 @@ class AdminController extends Controller
                 'nombre' => 'required|string|max:255',
                 'email' => 'required|email|unique:usuarios,email,' . $user->id,
                 'password' => 'nullable|string|min:6',
-                'rol_id' => 'required|exists:roles,id'
+                'rol_id' => 'required|exists:roles,id',
+                'restaurante_id' => 'nullable|exists:restaurantes,id'
             ]);
 
             $data = [
@@ -112,20 +128,26 @@ class AdminController extends Controller
 
             $user->update($data);
 
+            // Actualizar o crear la relación con el restaurante
+            if ($request->restaurante_id) {
+                GerenteRestaurante::updateOrCreate(
+                    ['id_usuario' => $user->id],
+                    ['id_restaurante' => $request->restaurante_id]
+                );
+            } else {
+                // Si no se selecciona restaurante, eliminar la relación si existe
+                GerenteRestaurante::where('id_usuario', $user->id)->delete();
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario actualizado exitosamente'
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'errors' => $e->errors()
-            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Hubo un error al actualizar el usuario'
+                'message' => 'Hubo un error al actualizar el usuario: ' . $e->getMessage()
             ], 500);
         }
     }

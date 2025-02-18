@@ -58,25 +58,15 @@
     <table class="table text-center">
             <thead>
                 <tr>
-                    <th>
-                        Nombre
-                        <button class="btn btn-sm btn-sort" data-column="nombre" data-order="asc">▲</button>
-                        <button class="btn btn-sm btn-sort" data-column="nombre" data-order="desc">▼</button>
-                    </th>
-                    <th>
-                        Email
-                        <button class="btn btn-sm btn-sort" data-column="email" data-order="asc">▲</button>
-                        <button class="btn btn-sm btn-sort" data-column="email" data-order="desc">▼</button>
-                    </th>
-                    <th>
-                        Rol
-                        <button class="btn btn-sm btn-sort" data-column="rol" data-order="asc">▲</button>
-                        <button class="btn btn-sm btn-sort" data-column="rol" data-order="desc">▼</button>
-                    </th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Restaurante</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody id="resultadousuarios">
+                <!-- Aquí se cargarán los usuarios dinámicamente -->
             </tbody>
         </table>        
     </div>
@@ -118,6 +108,15 @@
                         </select>
                         <div class="invalid-feedback" id="rolError"></div>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Restaurante</label>
+                        <select name="restaurante_id" class="form-control">
+                            <option value="">Seleccionar restaurante</option>
+                            @foreach($restaurantes as $restaurante)
+                                <option value="{{ $restaurante->id }}">{{ $restaurante->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-primary">Crear</button>
                 </form>
             </div>
@@ -157,7 +156,16 @@
                         </select>
                         <div class="invalid-feedback" id="editRolError"></div>
                     </div>
-                    <button type="submit" class="btn btn-primary" disabled>Actualizar</button>
+                    <div class="mb-3">
+                        <label class="form-label">Restaurante</label>
+                        <select id="editRestaurante" name="restaurante_id" class="form-control">
+                            <option value="">Seleccionar restaurante</option>
+                            @foreach($restaurantes as $restaurante)
+                                <option value="{{ $restaurante->id }}">{{ $restaurante->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
                 </form>
             </div>
         </div>
