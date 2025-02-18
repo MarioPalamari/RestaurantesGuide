@@ -15,7 +15,7 @@
         <nav class="nav">
             <div class="logo"><img src="{{ asset('img/logo.png') }}" alt="Logo"></div>
             <div class="nav-links">
-                <p id="usuarioNombre">Juan</p>
+                <p id="usuarioNombre">{{ session('nombre') }}</p>
                 <a href="{{ route('logout') }}">Salir</a>
             </div>
         </nav>
@@ -27,7 +27,14 @@
 
     <div class="container">
         <div class="info">
-            <h1 id="nombreRestaurante"></h1>
+            <div class="breadcamp">
+                <ul class="breadcrumb">
+                    <li></li>
+                    <li><a href="{{ route('restaurantes.restaurantes') }}">Restaurantes</a></li>
+                    <li id="nombreRestaurante">Italy</li>
+                </ul>
+            </div>
+            {{-- <h1 id="nombreRestaurante"></h1> --}}
             <p id="descripcionRestaurante"></p>
             <div class="imagenes">
                 <img id="imgRestaurante" src="" alt="Foto del restaurante">

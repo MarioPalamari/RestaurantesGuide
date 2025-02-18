@@ -65,7 +65,7 @@ class RestauranteController extends Controller
         // return view('restaurantes.restaurantes', compact('restaurantes'));
     }
 
-    public function mostrarpaginarestaurante( Request $request)
+    public function mostrarpaginarestaurante(Request $request)
     {
         session(['id_restaurante' => $request->id_restaurante]);
         return view('restaurantes.ver');
@@ -76,11 +76,7 @@ class RestauranteController extends Controller
         $id_restaurante = session('id_restaurante');
 
         $restaurante = Restaurante::select([
-            'restaurantes.id',
-            'restaurantes.nombre',
-            'restaurantes.descripcion',
-            'restaurantes.precio_medio',
-            'restaurantes.img',
+            'restaurantes.*',
             DB::raw('COALESCE(ROUND(AVG(valoraciones.valoracion), 2), 0) AS media_valoracion'),
             DB::raw('COUNT(valoraciones.valoracion) AS total_valoracion'),
         ])
@@ -103,10 +99,9 @@ class RestauranteController extends Controller
         $resultado = new Valoracion();
         $resultado->valoracion = $request->estrellas;
         $resultado->comentario = $request->comentario;
-        $resultado->id_usuarios = 2;
+        $resultado->id_usuarios = session('id');
         $resultado->id_restaurante = session('id_restaurante');
         $resultado->save();
-
         echo "ok";
     }
     public function restaurantesMejorValorados()
@@ -119,14 +114,12 @@ class RestauranteController extends Controller
             'restaurantes.img',
             DB::raw('COALESCE(ROUND(AVG(valoraciones.valoracion), 2), 0) AS media_valoracion')
         )
-        ->leftJoin('valoraciones', 'restaurantes.id', '=', 'valoraciones.id_restaurante')
-        ->groupBy('restaurantes.id', 'restaurantes.nombre', 'restaurantes.descripcion', 'restaurantes.precio_medio', 'restaurantes.img')
-        ->orderByDesc('media_valoracion')
-        ->limit(3) 
-        ->get();
-    
+            ->leftJoin('valoraciones', 'restaurantes.id', '=', 'valoraciones.id_restaurante')
+            ->groupBy('restaurantes.id', 'restaurantes.nombre', 'restaurantes.descripcion', 'restaurantes.precio_medio', 'restaurantes.img')
+            ->orderByDesc('media_valoracion')
+            ->limit(3)
+            ->get();
+
         return view('dashboard', compact('restaurantesMejorValorados'));
     }
-    
-    
 }
