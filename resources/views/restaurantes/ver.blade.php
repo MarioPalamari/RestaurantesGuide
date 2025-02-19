@@ -77,7 +77,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Deja tu valoración</h2>
-            <form id="frmopinar" onsubmit="event.preventDefault(); opinarform();">
+            <form id="frmopinar">
                 <input type="hidden" id="inputIdOpinar" name="id" value="">
                 @csrf
                 <p class="clasificacion">
@@ -92,7 +92,11 @@
                     <input id="estrella1" type="radio" name="estrellas" value="1"><label
                         for="estrella1">★</label>
                 </p>
+                <span id="errorEstrellas" class="error-message"></span> <!-- Aquí aparecerá el error de estrellas -->
+
                 <textarea id="inputComentario" name="comentario" placeholder="Escribe tu comentario..."></textarea>
+                <br>
+                <span id="errorComentario" class="error-message"></span> <!-- Aquí aparecerá el error del comentario -->
                 <button type="submit">Enviar Opinión</button>
             </form>
         </div>
